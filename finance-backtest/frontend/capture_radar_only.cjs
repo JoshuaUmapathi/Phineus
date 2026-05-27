@@ -39,7 +39,7 @@ const path = require('path');
     await page.evaluate(() => {
       const el = document.querySelector('.overflow-y-auto'); // first overflow container in page
       if (el) {
-        el.scrollTop = 500;
+        // el.scrollTop = 500;
       }
     });
 

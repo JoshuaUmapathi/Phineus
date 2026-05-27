@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
+        mono: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         /* ── Theme-aware dynamic colors mapping to App.css variables ── */

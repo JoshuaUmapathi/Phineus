@@ -167,7 +167,7 @@ body {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-strong) !important;
-  font-family: 'Geist Mono', 'Inter', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   letter-spacing: 0;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -197,7 +197,7 @@ body {
   letter-spacing: 0;
   text-transform: none;
   color: var(--text-2) !important;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   flex-shrink: 0;
 }
 
@@ -310,7 +310,7 @@ body {
 
 .audit-score-panel strong {
   color: var(--text-strong);
-  font-family: 'Geist Mono', 'Inter', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 52px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -353,7 +353,7 @@ body {
 .audit-metric-content strong {
   grid-area: value;
   color: var(--text-strong);
-  font-family: 'Geist Mono', 'Inter', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 22px;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -715,7 +715,7 @@ body {
   line-height: 1;
   letter-spacing: 0;
   color: var(--text-strong) !important;
-  font-family: 'Geist Mono', 'Inter', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   background: none !important;
   -webkit-background-clip: unset !important;
@@ -725,7 +725,7 @@ body {
 
 .metric-benchmark {
   font-size: 12px;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   color: var(--text-strong) !important;
   display: flex;
@@ -852,7 +852,7 @@ body {
 .data-table tr td:first-child {
   font-weight: 600;
   color: var(--text-strong) !important;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
 }
 
@@ -1064,7 +1064,7 @@ body {
 
 .allocation-row-weight em {
   color: var(--text-3);
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-variant-numeric: tabular-nums;
@@ -1149,7 +1149,7 @@ body {
   border-radius: 4px;
   background: var(--surface-2);
   color: var(--text-strong);
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
 }
@@ -1179,7 +1179,7 @@ body {
 
 .holding-row strong {
   color: var(--text-strong);
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
 }
 
@@ -1341,7 +1341,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
   color: var(--text-2) !important;
   text-align: right;
@@ -1349,7 +1349,7 @@ body {
 }
 
 .ledger-pl {
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -1433,7 +1433,7 @@ body {
 .grid-col-label {
   font-weight: 600;
   font-size: 11px;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   color: var(--text) !important;
   font-variant-numeric: tabular-nums;
 }
@@ -1488,7 +1488,7 @@ body {
   font-size: 11px;
   font-weight: 600;
   border: 1px solid var(--red) !important;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Inter', system-ui, sans-serif;
   letter-spacing: 0;
 }
 

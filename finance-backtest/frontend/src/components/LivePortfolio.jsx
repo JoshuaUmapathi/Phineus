@@ -1,21 +1,12 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
+import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, RadialBarChart, RadialBar } from 'recharts'
 import { X, CalendarDays, ChevronDown } from 'lucide-react'
 import DataQualityManifest from './DataQualityManifest'
-import { RadarChart as MuiRadarChart } from '@mui/x-charts/RadarChart';
-import {
-  BarChart,
-  LinearYAxis,
-  LinearYAxisTickSeries,
-  LinearYAxisTickLabel,
-  LinearXAxis,
-  LinearXAxisTickSeries,
-  BarSeries,
-  Bar,
-  GridlineSeries,
-  Gridline,
-} from 'reaviz';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/radar-chart'
+import { ChartContainer as PieChartContainer, ChartTooltip as PieChartTooltip, ChartTooltipContent as PieChartTooltipContent } from './ui/pie-chart'
 import { Calendar } from './ui/calendar'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './ui/table'
+import { Badge } from './ui/badge'
 
 /* ── Utilities ───────────────────────────────────────────────────── */
 function healthColor(score) {
@@ -118,10 +109,36 @@ function DatePickerButton({ value, onChange }) {
   )
 }
 
+/* ── Tooltip State Updater Helper ───────────────────────────────── */
+function TooltipStateUpdater({ active, payload, setHoveredFactor }) {
+  useEffect(() => {
+    if (active && payload && payload.length > 0) {
+      setHoveredFactor(payload);
+    } else {
+      setHoveredFactor(null);
+    }
+  }, [active, payload, setHoveredFactor]);
+  return null;
+}
+
+function HealthTooltipStateUpdater({ active, payload, coordinate, setHoveredHealthRing }) {
+  useEffect(() => {
+    if (active && payload && payload.length > 0 && coordinate) {
+      setHoveredHealthRing({
+        payload: payload[0].payload,
+        y: coordinate.y,
+        color: payload[0].color || payload[0].fill
+      });
+    } else {
+      setHoveredHealthRing(null);
+    }
+  }, [active, payload, coordinate, setHoveredHealthRing]);
+
+  return null;
+}
+
 /* ── Risk Radar ──────────────────────────────────────────────────── */
 function RiskRadar({ rr }) {
-  const [hideMark, setHideMark] = useState(false);
-  const [fillArea, setFillArea] = useState(true);
   if (!rr) {
     return (
       <div className="text-text-3 font-mono text-[11px] p-4">
@@ -132,6 +149,25 @@ function RiskRadar({ rr }) {
 
   const { sector_exposure = [], correlation = {}, factor_tilt = {} } = rr
   const tilts = factor_tilt.tilts || {}
+  const [hoveredFactor, setHoveredFactor] = useState(null);
+
+  const chartData = [
+    { factor: '6M', strategy: parseFloat(tilts.momentum_6m || 0), spy: 0.05 },
+    { factor: '12M', strategy: parseFloat(tilts.momentum_12m || 0), spy: 0.10 },
+    { factor: 'QUALITY', strategy: parseFloat(tilts.quality || 0), spy: 0.15 },
+    { factor: 'VOLATILITY', strategy: parseFloat(tilts.volatility || 0), spy: -0.05 }
+  ];
+
+  const chartConfig = {
+    strategy: {
+      label: 'Strategy',
+      color: 'var(--green)',
+    },
+    spy: {
+      label: 'SPY Benchmark',
+      color: 'var(--text-3)',
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -141,64 +177,45 @@ function RiskRadar({ rr }) {
           SECTOR EXPOSURE
         </div>
         {sector_exposure.length > 0 ? (
-          <div className="h-[180px] w-full px-1 py-1">
-            <BarChart
-              id="horizontal-sector-exposure-chart"
-              height={180}
-              data={sector_exposure.map(s => ({
-                key: s.sector.toUpperCase(),
-                data: Number(s.weight) * 100
-              }))}
-              yAxis={
-                <LinearYAxis
-                  type="category"
-                  tickSeries={
-                    <LinearYAxisTickSeries
-                      label={
-                        <LinearYAxisTickLabel
-                          format={(text) => (text.length > 10 ? `${text.slice(0, 10)}...` : text)}
-                          fill="var(--text-2)"
-                        />
-                      }
-                    />
-                  }
-                />
-              }
-              xAxis={
-                <LinearXAxis
-                  type="value"
-                  axisLine={null}
-                  tickSeries={
-                    <LinearXAxisTickSeries
-                      label={null}
-                      line={null}
-                      tickSize={10}
-                    />
-                  }
-                />
-              }
-              series={
-                <BarSeries
-                  layout="horizontal"
-                  bar={
-                    <Bar
-                      glow={{
-                        blur: 20,
-                        opacity: 0.4,
-                      }}
-                      gradient={null}
-                    />
-                  }
-                  colorScheme={['#9152EE', '#40D3F4', '#40E5D1', '#4C86FF']}
-                  padding={0.3}
-                />
-              }
-              gridlines={
-                <GridlineSeries
-                  line={<Gridline strokeColor="var(--border)" />}
-                />
-              }
-            />
+          <div className="w-full px-1 py-2 pr-14 flex flex-col gap-3.5">
+            {[...sector_exposure]
+              .sort((a, b) => Number(b.weight) - Number(a.weight))
+              .map((item, idx) => {
+                const pct = Number(item.weight) * 100;
+                const colors = ['#9152EE', '#40D3F4', '#40E5D1', '#4C86FF'];
+                const color = colors[idx % colors.length];
+                return (
+                  <div key={item.sector} className="group flex items-center justify-between gap-3 w-full">
+                    {/* Sector name label */}
+                    <span className="w-28 text-left font-mono text-[9px] font-bold text-text-2 tracking-wide uppercase truncate" title={item.sector}>
+                      {item.sector}
+                    </span>
+                    
+                    {/* Bar Track Container */}
+                    <div className="flex-1 h-4 relative bg-surface-3 rounded flex items-center">
+                      {/* The actual filled bar */}
+                      <div 
+                        className="h-full rounded transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                        style={{ 
+                          width: `${pct}%`, 
+                          backgroundColor: color,
+                          boxShadow: `0 0 10px ${color}30`
+                        }}
+                      />
+
+                      {/* Number value appearing at the end of the bar on hover */}
+                      <div 
+                        className="absolute font-mono text-[9px] font-bold text-text-strong bg-surface border border-border px-1.5 py-0.5 rounded shadow-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] z-10"
+                        style={{
+                          left: `calc(${pct}% + 8px)`
+                        }}
+                      >
+                        {pct.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         ) : (
           <div className="font-mono text-[11px] text-text-3">NO SECTOR DATA</div>
@@ -225,97 +242,82 @@ function RiskRadar({ rr }) {
       </div>
 
       {/* Factor Tilt */}
-      <div>
+      <div className="relative">
         <div className="font-mono text-[10px] uppercase tracking-widest text-text-3 mb-2 pb-1 border-b border-border">
           FACTOR TILT
         </div>
+        {hoveredFactor && hoveredFactor.length > 0 && (
+          <div className="absolute top-7 right-0 z-20 pointer-events-none bg-surface/95 backdrop-blur-sm border border-border rounded px-2.5 py-1.5 shadow-lg flex flex-col gap-1 text-[10px] font-sans transition-all duration-200">
+            <div className="font-bold text-text-strong uppercase tracking-wide border-b border-border pb-0.5 mb-0.5">
+              {hoveredFactor[0].payload.factor === '6M' 
+                ? 'Momentum 6M' 
+                : hoveredFactor[0].payload.factor === '12M' 
+                ? 'Momentum 12M' 
+                : hoveredFactor[0].payload.factor}
+            </div>
+            {hoveredFactor.map((item) => (
+              <div key={item.name} className="flex items-center justify-between gap-4">
+                <span className="text-text-2">{item.name}:</span>
+                <span 
+                  className="font-mono font-bold"
+                  style={{ color: item.color }}
+                >
+                  {item.value !== undefined ? (item.value >= 0 ? '+' : '') + item.value.toFixed(2) : '—'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
         {Object.keys(tilts).length === 0 ? (
           <div className="font-mono text-[11px] text-text-3">NO TILT DATA</div>
         ) : (
           <>
-            <div className="w-full flex flex-col items-center">
-              {/* Controls */}
-              <div className="flex gap-4 mb-2 font-mono text-[10px] text-text-3">
-                <label className="flex items-center gap-1.5 cursor-pointer hover:text-text-strong select-none">
-                  <input
-                    type="checkbox"
-                    checked={!hideMark}
-                    onChange={(e) => setHideMark(!e.target.checked)}
-                    className="accent-green border-border bg-surface rounded"
-                  />
-                  <span>WITH MARK</span>
-                </label>
-                <label className="flex items-center gap-1.5 cursor-pointer hover:text-text-strong select-none">
-                  <input
-                    type="checkbox"
-                    checked={fillArea}
-                    onChange={(e) => setFillArea(e.target.checked)}
-                    className="accent-green border-border bg-surface rounded"
-                  />
-                  <span>FILL AREA</span>
-                </label>
-              </div>
-
+            <div className="w-full flex flex-col items-center pt-2">
               {/* Radar Chart */}
-              <div className="w-full max-w-[400px]">
-                <MuiRadarChart
-                  height={190}
-                  radar={{
-                    max: 1.5,
-                    min: -1.5,
-                    metrics: ['MOM 6M', 'MOM 12M', 'QUALITY', 'VOLATILITY'],
-                  }}
-                  series={[
-                    {
-                      label: 'Strategy',
-                      data: [
-                        parseFloat(tilts.momentum_6m || 0),
-                        parseFloat(tilts.momentum_12m || 0),
-                        parseFloat(tilts.quality || 0),
-                        parseFloat(tilts.volatility || 0)
-                      ],
-                      hideMark,
-                      fillArea,
-                      color: '#10B981', // Strategy color (green)
-                      valueFormatter: (v) => (v != null ? v.toFixed(2) : '—'),
-                    },
-                    {
-                      label: 'SPY Benchmark',
-                      data: [0.05, 0.10, 0.15, -0.05], // SPY benchmark tilts
-                      hideMark,
-                      fillArea,
-                      color: '#94A3B8', // SPY color (grey)
-                      valueFormatter: (v) => (v != null ? v.toFixed(2) : '—'),
-                    }
-                  ]}
-                  slotProps={{
-                    tooltip: { trigger: 'item' }
-                  }}
-                />
+              <div className="w-full max-h-[190px] max-w-[260px]">
+                <ChartContainer
+                  config={chartConfig}
+                  className="mx-auto aspect-square max-h-[190px] w-full"
+                >
+                  <RadarChart data={chartData}>
+                    <ChartTooltip cursor={false} wrapperStyle={{ display: 'none' }} content={<TooltipStateUpdater setHoveredFactor={setHoveredFactor} />} />
+                    <PolarAngleAxis
+                      dataKey="factor"
+                      tick={{ fill: 'var(--text-3)', fontSize: 9, fontFamily: 'Inter, system-ui, sans-serif' }}
+                    />
+                    <PolarGrid stroke="var(--border)" strokeDasharray="3 3" />
+                    <Radar
+                      name="Strategy"
+                      dataKey="strategy"
+                      stroke="var(--color-strategy)"
+                      fill="none"
+                      strokeWidth={2}
+                      filter="url(#multi-stroke-line-glow)"
+                    />
+                    <Radar
+                      name="SPY Benchmark"
+                      dataKey="spy"
+                      stroke="var(--color-spy)"
+                      fill="var(--color-spy)"
+                      fillOpacity={0.15}
+                      strokeWidth={1.5}
+                      strokeDasharray="4 4"
+                    />
+                    <defs>
+                      <filter
+                        id="multi-stroke-line-glow"
+                        x="-20%"
+                        y="-20%"
+                        width="140%"
+                        height="140%"
+                      >
+                        <feGaussianBlur stdDeviation="4" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                    </defs>
+                  </RadarChart>
+                </ChartContainer>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {[
-                ['MOMENTUM 6M',  tilts.momentum_6m],
-                ['MOMENTUM 12M', tilts.momentum_12m],
-                ['VOLATILITY',   tilts.volatility],
-                ['QUALITY',      tilts.quality],
-              ].map(([label, val]) => {
-                if (val == null) return null
-                const num = Number(val)
-                const color = num >= 0 ? 'text-green' : 'text-red'
-                return (
-                  <div key={label} className="font-mono text-[10px] flex justify-between border-b border-border pb-1">
-                    <span className="text-text-3 text-[9px]">{label}</span>
-                    <span className={`font-bold ${color}`}>
-                      {num >= 0 ? '+' : ''}{num.toFixed(2)}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="mt-2.5 text-[9px] text-text-3 font-mono text-center">
-              {factor_tilt.n_covered}/{factor_tilt.n_total} positions in universe
             </div>
           </>
         )}
@@ -335,103 +337,156 @@ function DefensiveIntelligence({ defense, health }) {
   }
 
   const metrics    = defense?.metrics    ?? []
-  const insights   = defense?.insights   ?? []
-  const components = health?.components  ?? {}
-  const flags      = health?.flags       ?? []
   const score      = health?.score       ?? 0
+  const components = health?.components  ?? {}
+  const [hoveredHealthRing, setHoveredHealthRing] = useState(null);
+
+  const formatDelta = (deltaStr, improved) => {
+    if (!deltaStr) return '—';
+    const match = deltaStr.match(/~?(\d+(?:\.\d+)?%)/);
+    if (match) {
+      const pct = match[1];
+      const colorClass = improved ? 'text-green font-bold' : 'text-red font-bold';
+      return <span className={colorClass}>{pct}</span>;
+    }
+    const colorClass = improved ? 'text-green font-bold' : 'text-red font-bold';
+    return <span className={colorClass}>{deltaStr}</span>;
+  };
+
+  const getHealthColorHex = (val) => {
+    if (val >= 80) return 'var(--green)';
+    if (val >= 60) return 'var(--amber)';
+    return 'var(--red)';
+  };
+
+  const healthChartConfig = {
+    diversification: {
+      label: "Diversification",
+      color: "var(--green)",
+    },
+    concentration: {
+      label: "Concentration",
+      color: "var(--amber)",
+    },
+    sector_balance: {
+      label: "Sector Balance",
+      color: "var(--red)",
+    },
+    position_count: {
+      label: "Position Count",
+      color: "var(--blue)",
+    }
+  };
+
+  const radialData = [
+    { name: 'position_count', actualValue: components.position_count ?? 0, value: Math.max(2, components.position_count ?? 0), fill: 'var(--color-position_count)' },
+    { name: 'sector_balance', actualValue: components.sector_balance ?? 0, value: Math.max(2, components.sector_balance ?? 0), fill: 'var(--color-sector_balance)' },
+    { name: 'concentration', actualValue: components.concentration ?? 0, value: Math.max(2, components.concentration ?? 0), fill: 'var(--color-concentration)' },
+    { name: 'diversification', actualValue: components.diversification ?? 0, value: Math.max(2, components.diversification ?? 0), fill: 'var(--color-diversification)' },
+  ];
 
   return (
     <div className="flex flex-col gap-5 p-4">
-      {/* Metrics vs Baseline */}
+      {/* 1. Metrics vs Baseline */}
       {metrics.length > 0 && (
         <div>
           <div className="font-mono text-[10px] uppercase tracking-widest text-text-3 mb-2 pb-1 border-b border-border">
             METRICS VS BASELINE
           </div>
-          <table className="w-full table-fixed font-mono text-[10px]">
-            <thead>
-              <tr className="text-text-3">
-                <th className="text-left pb-1 font-normal w-[40%]">METRIC</th>
-                <th className="text-right pb-1 font-normal">PORTFOLIO</th>
-                <th className="text-right pb-1 font-normal">EQ-WT</th>
-                <th className="text-right pb-1 font-normal">DELTA</th>
-                <th className="w-5 text-center pb-1 font-normal" />
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="w-full text-[13px]">
+            <TableHeader>
+              <TableRow className="text-text-3 border-b border-border/40">
+                <TableHead className="text-left font-normal py-1 px-2">METRIC</TableHead>
+                <TableHead className="text-right font-normal py-1 px-2">PORTFOLIO</TableHead>
+                <TableHead className="text-right font-normal py-1 px-2">SPY</TableHead>
+                <TableHead className="text-right font-normal py-1 px-2">DELTA</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {metrics.map((m, i) => (
-                <tr key={i} className="border-t border-border">
-                  <td className="py-1 text-text-2 truncate pr-2">{m.name}</td>
-                  <td className="py-1 text-right text-text-strong">{m.portfolio}</td>
-                  <td className="py-1 text-right text-text-3">{m.equal_weight}</td>
-                  <td className="py-1 text-right text-text-3">{m.delta}</td>
-                  <td className="py-1 text-center">
-                    {m.improved
-                      ? <span className="text-green font-bold">✓</span>
-                      : <span className="text-red font-bold">✗</span>
-                    }
-                  </td>
-                </tr>
+                <TableRow key={i} index={i} className="border-b border-border/40">
+                  <TableCell className="text-left text-text-2 py-1.5 px-2 truncate font-[inherit]">{m.name}</TableCell>
+                  <TableCell className="text-right text-text-strong py-1.5 px-2">{m.portfolio}</TableCell>
+                  <TableCell className="text-right text-text-3 py-1.5 px-2">{m.equal_weight}</TableCell>
+                  <TableCell className="text-right py-1.5 px-2">
+                    {formatDelta(m.delta, m.improved)}
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 
-      {/* Risk Insights */}
-      {insights.length > 0 && (
-        <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-text-3 mb-2 pb-1 border-b border-border">
-            RISK INSIGHTS
+      {/* 2. Evaluation Score Doughnut Chart */}
+      {score !== undefined && (
+        <div className="flex flex-col items-center">
+          <div className="w-full font-mono text-[10px] uppercase tracking-widest text-text-3 mb-2 pb-1 border-b border-border text-left">
+            EVALUATION SCORE
           </div>
-          {insights.map((ins, i) => {
-            const tag = ins.type === 'defense'
-              ? <span className="text-green font-bold flex-shrink-0">[DEFENSE]</span>
-              : <span className="text-red font-bold flex-shrink-0">[RISK]</span>
-            return (
-              <div key={i} className="font-mono text-[11px] text-text-2 mb-2 flex gap-2">
-                {tag}
-                <span>{ins.text}</span>
+          <div className="relative w-full h-[280px] flex items-center justify-center">
+            {hoveredHealthRing && (
+              <div 
+                className="absolute z-20 pointer-events-none bg-surface/95 backdrop-blur-sm border border-border rounded px-2.5 py-1.5 shadow-lg flex flex-col gap-1 text-[10px] font-sans"
+                style={{ 
+                  left: '-10px',
+                  top: `${Math.max(10, Math.min(185, hoveredHealthRing.y - 22))}px`,
+                  width: '110px'
+                }}
+              >
+                <div 
+                  className="font-bold uppercase tracking-wide border-b border-border pb-0.5 mb-0.5"
+                  style={{ color: hoveredHealthRing.color }}
+                >
+                  {healthChartConfig[hoveredHealthRing.payload.name]?.label || hoveredHealthRing.payload.name}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-text-2">SCORE:</span>
+                  <span className="font-mono font-bold text-text-strong">
+                    {hoveredHealthRing.payload.actualValue}/100
+                  </span>
+                </div>
               </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Health Score Breakdown */}
-      {Object.keys(components).length > 0 && (
-        <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-text-3 mb-2 pb-1 border-b border-border">
-            HEALTH SCORE — {score}/100
-          </div>
-          {[
-            ['DIVERSIFICATION', components.diversification],
-            ['CONCENTRATION',   components.concentration],
-            ['SECTOR BALANCE',  components.sector_balance],
-            ['POSITION COUNT',  components.position_count],
-          ].map(([label, val]) => {
-            if (val == null) return null
-            const num = Number(val)
-            const bar = textBar(num, 100)
-            return (
-              <div key={label} className="font-mono text-[11px] flex items-center gap-2 mb-1.5">
-                <span className="w-28 text-text-2 flex-shrink-0">{label}</span>
-                <span className="text-text-strong w-6 text-right">{num}</span>
-                <span className="text-text-3 tracking-tighter">{bar}</span>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Flags */}
-      {flags.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {flags.map((flag, i) => (
-            <div key={i} className="border border-red p-2 font-mono text-[11px] text-red">
-              {flag}
+            )}
+            <PieChartContainer config={healthChartConfig} className="w-[280px] h-[280px]">
+              <RadialBarChart
+                cx="50%"
+                cy="50%"
+                innerRadius="45%"
+                outerRadius="100%"
+                barSize={18}
+                data={radialData}
+                startAngle={90}
+                endAngle={-270}
+              >
+                <PolarAngleAxis
+                  type="number"
+                  domain={[0, 100]}
+                  angleAxisId={0}
+                  tick={false}
+                />
+                <RadialBar
+                  background
+                  dataKey="value"
+                  nameKey="name"
+                  cornerRadius={10}
+                />
+                <PieChartTooltip
+                  cursor={false}
+                  wrapperStyle={{ display: 'none' }}
+                  content={<HealthTooltipStateUpdater setHoveredHealthRing={setHoveredHealthRing} />}
+                />
+              </RadialBarChart>
+            </PieChartContainer>
+            <div className="absolute flex flex-col items-center justify-center pointer-events-none">
+              <span className={`text-3xl font-extrabold tracking-tight ${healthColor(score)}`}>
+                {score}
+              </span>
+              <span className="text-[9px] text-text-3 uppercase tracking-widest font-semibold mt-0.5">
+                EVALUATION
+              </span>
             </div>
-          ))}
+          </div>
         </div>
       )}
     </div>
@@ -448,7 +503,7 @@ function HoldingsTable({ holdings, loading }) {
         </span>
       </div>
       <div className="overflow-y-auto flex-1">
-        <table className="w-full table-fixed font-mono text-[11px]">
+        <table className="w-full table-fixed font-mono text-[13px]">
           <thead className="sticky top-0 bg-surface-2 z-10">
             <tr>
               {['TICKER', 'SECTOR', 'WEIGHT', 'SHARES', 'MKT VALUE', 'P&L', 'DATA SOURCE'].map(col => (
@@ -958,10 +1013,10 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
           <div 
             key={item.name} 
             onClick={() => setActiveModal(item.name)}
-            className="group relative bg-surface border border-border rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 shadow-sm overflow-hidden"
+            className="group relative bg-surface border border-border rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-sm overflow-hidden"
           >
             {/* Learn More Text overlay */}
-            <div className="absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0 z-10">
+            <div className="absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform -translate-y-2 group-hover:translate-y-0 z-10">
               <span className="font-sans text-[10px] font-medium tracking-wide text-text-2 bg-surface px-2 py-0.5 rounded border border-border">
                 Learn More →
               </span>
