@@ -1,7 +1,20 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts'
+import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 import { X, CalendarDays, ChevronDown } from 'lucide-react'
 import DataQualityManifest from './DataQualityManifest'
+import { RadarChart as MuiRadarChart } from '@mui/x-charts/RadarChart';
+import {
+  BarChart,
+  LinearYAxis,
+  LinearYAxisTickSeries,
+  LinearYAxisTickLabel,
+  LinearXAxis,
+  LinearXAxisTickSeries,
+  BarSeries,
+  Bar,
+  GridlineSeries,
+  Gridline,
+} from 'reaviz';
 import { Calendar } from './ui/calendar'
 
 /* ── Utilities ───────────────────────────────────────────────────── */
@@ -107,6 +120,8 @@ function DatePickerButton({ value, onChange }) {
 
 /* ── Risk Radar ──────────────────────────────────────────────────── */
 function RiskRadar({ rr }) {
+  const [hideMark, setHideMark] = useState(false);
+  const [fillArea, setFillArea] = useState(true);
   if (!rr) {
     return (
       <div className="text-text-3 font-mono text-[11px] p-4">
@@ -126,63 +141,65 @@ function RiskRadar({ rr }) {
           SECTOR EXPOSURE
         </div>
         {sector_exposure.length > 0 ? (
-          <>
-            <div className="flex h-3 w-full bg-surface-2 border border-border rounded-none overflow-hidden mb-3">
-              {sector_exposure.map((s, idx) => {
-                const weight = Number(s.weight);
-                if (weight <= 0) return null;
-                const colors = [
-                  'var(--chart-1)',
-                  'var(--chart-3)',
-                  'var(--chart-4)',
-                  'var(--chart-5)',
-                  'var(--blue)',
-                  'var(--text-2)',
-                  'var(--amber)',
-                ];
-                const color = colors[idx % colors.length];
-                return (
-                  <div
-                    key={s.sector}
-                    style={{
-                      width: `${(weight * 100).toFixed(2)}%`,
-                      backgroundColor: color,
-                    }}
-                    title={`${s.sector}: ${(weight * 100).toFixed(1)}%`}
-                  />
-                );
-              })}
-            </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-2">
-              {sector_exposure.map((s, idx) => {
-                const weight = Number(s.weight);
-                if (weight <= 0) return null;
-                const colors = [
-                  'var(--chart-1)',
-                  'var(--chart-3)',
-                  'var(--chart-4)',
-                  'var(--chart-5)',
-                  'var(--blue)',
-                  'var(--text-2)',
-                  'var(--amber)',
-                ];
-                const color = colors[idx % colors.length];
-                const badge = s.status === 'alert'
-                  ? <span className="text-red font-bold ml-1 text-[9px]">[ALERT]</span>
-                  : s.status === 'warning'
-                    ? <span className="text-amber font-bold ml-1 text-[9px]">[WARN]</span>
-                    : null;
-                return (
-                  <div key={s.sector} className="font-mono text-[11px] flex items-center gap-1.5">
-                    <span style={{ backgroundColor: color }} className="w-1.5 h-1.5 flex-shrink-0" />
-                    <span className="text-text-2 uppercase">{s.sector}</span>
-                    <span className="text-text-strong font-bold">{(weight * 100).toFixed(1)}%</span>
-                    {badge}
-                  </div>
-                );
-              })}
-            </div>
-          </>
+          <div className="h-[180px] w-full px-1 py-1">
+            <BarChart
+              id="horizontal-sector-exposure-chart"
+              height={180}
+              data={sector_exposure.map(s => ({
+                key: s.sector.toUpperCase(),
+                data: Number(s.weight) * 100
+              }))}
+              yAxis={
+                <LinearYAxis
+                  type="category"
+                  tickSeries={
+                    <LinearYAxisTickSeries
+                      label={
+                        <LinearYAxisTickLabel
+                          format={(text) => (text.length > 10 ? `${text.slice(0, 10)}...` : text)}
+                          fill="var(--text-2)"
+                        />
+                      }
+                    />
+                  }
+                />
+              }
+              xAxis={
+                <LinearXAxis
+                  type="value"
+                  axisLine={null}
+                  tickSeries={
+                    <LinearXAxisTickSeries
+                      label={null}
+                      line={null}
+                      tickSize={10}
+                    />
+                  }
+                />
+              }
+              series={
+                <BarSeries
+                  layout="horizontal"
+                  bar={
+                    <Bar
+                      glow={{
+                        blur: 20,
+                        opacity: 0.4,
+                      }}
+                      gradient={null}
+                    />
+                  }
+                  colorScheme={['#9152EE', '#40D3F4', '#40E5D1', '#4C86FF']}
+                  padding={0.3}
+                />
+              }
+              gridlines={
+                <GridlineSeries
+                  line={<Gridline strokeColor="var(--border)" />}
+                />
+              }
+            />
+          </div>
         ) : (
           <div className="font-mono text-[11px] text-text-3">NO SECTOR DATA</div>
         )}
@@ -216,26 +233,66 @@ function RiskRadar({ rr }) {
           <div className="font-mono text-[11px] text-text-3">NO TILT DATA</div>
         ) : (
           <>
-            <div className="h-[160px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart outerRadius="70%" data={[
-                  { subject: 'MOM 6M', value: Number(tilts.momentum_6m || 0) },
-                  { subject: 'MOM 12M', value: Number(tilts.momentum_12m || 0) },
-                  { subject: 'QUALITY', value: Number(tilts.quality || 0) },
-                  { subject: 'VOLATILITY', value: Number(tilts.volatility || 0) },
-                ]}>
-                  <PolarGrid stroke="#333" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-3)', fontSize: 9, fontFamily: 'Geist Mono, monospace' }} />
-                  <Radar
-                    name="Factor Tilt"
-                    dataKey="value"
-                    stroke="var(--green)"
-                    fill="var(--green)"
-                    fillOpacity={0.25}
-                    dot={{ r: 3, fill: 'var(--green)', strokeWidth: 0 }}
+            <div className="w-full flex flex-col items-center">
+              {/* Controls */}
+              <div className="flex gap-4 mb-2 font-mono text-[10px] text-text-3">
+                <label className="flex items-center gap-1.5 cursor-pointer hover:text-text-strong select-none">
+                  <input
+                    type="checkbox"
+                    checked={!hideMark}
+                    onChange={(e) => setHideMark(!e.target.checked)}
+                    className="accent-green border-border bg-surface rounded"
                   />
-                </RadarChart>
-              </ResponsiveContainer>
+                  <span>WITH MARK</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer hover:text-text-strong select-none">
+                  <input
+                    type="checkbox"
+                    checked={fillArea}
+                    onChange={(e) => setFillArea(e.target.checked)}
+                    className="accent-green border-border bg-surface rounded"
+                  />
+                  <span>FILL AREA</span>
+                </label>
+              </div>
+
+              {/* Radar Chart */}
+              <div className="w-full max-w-[400px]">
+                <MuiRadarChart
+                  height={190}
+                  radar={{
+                    max: 1.5,
+                    min: -1.5,
+                    metrics: ['MOM 6M', 'MOM 12M', 'QUALITY', 'VOLATILITY'],
+                  }}
+                  series={[
+                    {
+                      label: 'Strategy',
+                      data: [
+                        parseFloat(tilts.momentum_6m || 0),
+                        parseFloat(tilts.momentum_12m || 0),
+                        parseFloat(tilts.quality || 0),
+                        parseFloat(tilts.volatility || 0)
+                      ],
+                      hideMark,
+                      fillArea,
+                      color: '#10B981', // Strategy color (green)
+                      valueFormatter: (v) => (v != null ? v.toFixed(2) : '—'),
+                    },
+                    {
+                      label: 'SPY Benchmark',
+                      data: [0.05, 0.10, 0.15, -0.05], // SPY benchmark tilts
+                      hideMark,
+                      fillArea,
+                      color: '#94A3B8', // SPY color (grey)
+                      valueFormatter: (v) => (v != null ? v.toFixed(2) : '—'),
+                    }
+                  ]}
+                  slotProps={{
+                    tooltip: { trigger: 'item' }
+                  }}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-2">
               {[
@@ -820,11 +877,16 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
     return null;
   };
 
+  const stratSharpeVal = parseFloat(strat?.Sharpe) || 1.48;
+  const spySharpeVal = parseFloat(spy?.Sharpe) || 0.98;
+  const sharpeDeltaPct = spySharpeVal ? ((stratSharpeVal - spySharpeVal) / spySharpeVal) * 100 : 0;
+  const sharpePctText = (sharpeDeltaPct >= 0 ? '+' : '') + sharpeDeltaPct.toFixed(2) + '%';
+  const sharpeDeltaChangeType = sharpeDeltaPct >= 0 ? 'positive' : 'negative';
+
   const summary = [
     {
       name: 'PORTFOLIO NAV',
       value: navValue,
-      change: lastDailyReturnVal,
       percentageChange: lastDailyReturnPct,
       changeType: navChangeType,
       data: navData,
@@ -832,25 +894,22 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
     {
       name: 'TOTAL RETURN / CAGR',
       value: strat?.CAGR || '—',
-      change: spy?.CAGR ? `SPY: ${spy.CAGR}` : '—',
-      percentageChange: cagrDeltaSign + cagrDelta.toFixed(2) + '%',
+      percentageChange: (cagrDelta >= 0 ? '+' : '') + cagrDelta.toFixed(2) + '%',
       changeType: cagrDelta >= 0 ? 'positive' : 'negative',
       data: cagrData,
     },
     {
       name: 'MAX DRAWDOWN',
       value: strat?.['Max Drawdown'] || '—',
-      change: spy?.['Max Drawdown'] ? `SPY: ${spy['Max Drawdown']}` : '—',
-      percentageChange: ddDeltaSign + ddDelta.toFixed(2) + '%',
+      percentageChange: (ddDelta >= 0 ? '+' : '') + ddDelta.toFixed(2) + '%',
       changeType: ddDelta >= 0 ? 'positive' : 'negative',
       data: ddData,
     },
     {
       name: 'SHARPE RATIO',
       value: strat?.Sharpe || '—',
-      change: spy?.Sharpe ? `SPY: ${spy.Sharpe}` : '—',
-      percentageChange: sharpeStatusText,
-      changeType: sharpeChangeType,
+      percentageChange: sharpePctText,
+      changeType: sharpeDeltaChangeType,
       data: sharpeData,
     }
   ];
@@ -899,10 +958,10 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
           <div 
             key={item.name} 
             onClick={() => setActiveModal(item.name)}
-            className="group relative bg-surface border border-border rounded-xl p-5 flex flex-col justify-between hover:bg-surface-2 hover:border-border-2 cursor-pointer transition-all duration-300 shadow-sm overflow-hidden"
+            className="group relative bg-surface border border-border rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 shadow-sm overflow-hidden"
           >
             {/* Learn More Text overlay */}
-            <div className="absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-10">
+            <div className="absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0 z-10">
               <span className="font-sans text-[10px] font-medium tracking-wide text-text-2 bg-surface px-2 py-0.5 rounded border border-border">
                 Learn More →
               </span>
@@ -915,8 +974,7 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
               <span className="font-mono font-bold text-2xl leading-none text-text-strong">
                 {item.value}
               </span>
-              <span className="flex items-center gap-1 font-mono text-[11px]">
-                <span className="text-text-3">{item.change}</span>
+              <span className="font-mono text-[11px]">
                 <span className={item.changeType === 'positive' ? 'text-green font-bold' : 'text-red font-bold'}>
                   ({item.percentageChange})
                 </span>

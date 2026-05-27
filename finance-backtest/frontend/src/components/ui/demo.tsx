@@ -1,5 +1,12 @@
-import { Component } from "@/components/ui/category-bar-chart";
+import React from 'react';
+import IncidentSummaryCard from '@/components/ui/horizontal-bar-chart';
 
-export default function DemoOne() {
-  return <Component className="max-w-[500px]" />;
+export function IncidentSummaryCardDemoPage() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-neutral-900 p-4 transition-colors duration-300">
+      <IncidentSummaryCard />
+    </div>
+  );
 }
+
+export default IncidentSummaryCardDemoPage;
