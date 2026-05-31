@@ -7,6 +7,13 @@ import { ChartContainer as PieChartContainer, ChartTooltip as PieChartTooltip, C
 import { Calendar } from './ui/calendar'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './ui/table'
 import { Badge } from './ui/badge'
+import MuiTable from '@mui/material/Table'
+import MuiTableBody from '@mui/material/TableBody'
+import MuiTableCell from '@mui/material/TableCell'
+import MuiTableContainer from '@mui/material/TableContainer'
+import MuiTableHead from '@mui/material/TableHead'
+import MuiTableRow from '@mui/material/TableRow'
+import MuiPaper from '@mui/material/Paper'
 
 /* ── Utilities ───────────────────────────────────────────────────── */
 function healthColor(score) {
@@ -495,112 +502,137 @@ function DefensiveIntelligence({ defense, health }) {
 
 /* ── Holdings Table ──────────────────────────────────────────────── */
 function HoldingsTable({ holdings, loading }) {
+  const columns = ['TICKER', 'SECTOR', 'WEIGHT', 'SHARES', 'MKT VALUE', 'UNREALIZED P&L']
+
   return (
-    <>
-      <div className="bg-surface-2 border-b border-border-2 px-4 py-2 flex-shrink-0">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-text-3">
-          HOLDINGS
-        </span>
-      </div>
-      <div className="overflow-y-auto flex-1">
-        <table className="w-full table-fixed font-mono text-[13px]">
-          <thead className="sticky top-0 bg-surface-2 z-10">
-            <tr>
-              {['TICKER', 'SECTOR', 'WEIGHT', 'SHARES', 'MKT VALUE', 'P&L', 'DATA SOURCE'].map(col => (
-                <th
+    <div className="overflow-y-auto flex-1">
+      <MuiTableContainer
+        component={MuiPaper}
+        elevation={3}
+        sx={{ borderRadius: 0 }}
+      >
+        <MuiTable sx={{ width: '100%', tableLayout: 'fixed' }} size="small" aria-label="holdings table">
+          <MuiTableHead>
+            <MuiTableRow sx={{ backgroundColor: '#1e1e2e' }}>
+              {columns.map((col, i) => (
+                <MuiTableCell
                   key={col}
-                  className="text-left px-3 py-2 text-[10px] text-text-3 font-normal uppercase tracking-widest border-b border-border-2 whitespace-nowrap"
+                  align={i >= 3 ? 'right' : 'left'}
+                  sx={{
+                    color: '#94a3b8',
+                    fontFamily: 'monospace',
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    borderBottom: '1px solid #334155',
+                    py: 1.5,
+                    whiteSpace: 'nowrap',
+                  }}
                 >
                   {col}
-                </th>
+                </MuiTableCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </MuiTableRow>
+          </MuiTableHead>
+          <MuiTableBody>
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <tr key={i} className="animate-pulse border-b border-border-2">
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-10" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-24" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-16" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-12" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-20" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-16" /></td>
-                  <td className="px-3 py-2.5"><div className="h-3.5 bg-surface-3 rounded w-20" /></td>
-                </tr>
+                <MuiTableRow key={i} sx={{ backgroundColor: i % 2 === 0 ? '#0f172a' : '#111827' }}>
+                  {[40, 96, 48, 48, 64, 80].map((w, j) => (
+                    <MuiTableCell key={j} sx={{ borderColor: '#1e293b' }}>
+                      <div className="h-3 rounded animate-pulse bg-slate-700" style={{ width: w }} />
+                    </MuiTableCell>
+                  ))}
+                </MuiTableRow>
               ))
             ) : holdings.length > 0 ? (
               holdings.map((row, i) => {
-                const weight = Number(row.weight || 0)
-                const pnl    = Number(row.pnl_pct || 0)
-                const pnlColor = row.pnl_pct != null
-                  ? (pnl >= 0 ? 'text-green' : 'text-red')
-                  : 'text-text-3'
-                const barFill = Math.min(Math.round(weight * 100), 10)
+                const weight    = Number(row.weight || 0)
+                const pnl       = Number(row.pnl_pct || 0)
+                const pnlColor  = row.pnl_pct != null ? (pnl >= 0 ? '#10b981' : '#ef4444') : '#64748b'
+                const pnlDollar = row.mkt_value != null && row.pnl_pct != null
+                  ? Math.round(Number(row.mkt_value) * (pnl / 100))
+                  : null
+                const isMissing  = row.source === 'missing' || !row.source
+                const isFallback = row.source === 'yfinance'
+                const rowBg      = i % 2 === 0 ? '#0f172a' : '#111827'
                 return (
-                  <tr
+                  <MuiTableRow
                     key={row.ticker}
-                    className={i % 2 === 0 ? 'bg-surface' : 'bg-surface-2'}
+                    sx={{
+                      backgroundColor: rowBg,
+                      '&:last-child td, &:last-child th': { border: 0 },
+                      '&:hover': { backgroundColor: '#1e293b', cursor: 'default' },
+                    }}
                   >
-                    <td className="px-3 py-1.5 text-text-strong font-bold">{row.ticker}</td>
-                    <td className="px-3 py-1.5 text-text-2 truncate">{row.sector || '—'}</td>
-                    <td className="px-3 py-1.5">
-                      <div className="flex items-center gap-1">
-                        <span className="text-text-strong">{(weight * 100).toFixed(1)}%</span>
-                        <span className="text-text-3 text-[9px] tracking-tighter">
-                          {'█'.repeat(barFill)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-3 py-1.5 text-text-2">
+                    <MuiTableCell
+                      component="th"
+                      scope="row"
+                      sx={{ color: '#f1f5f9', fontFamily: 'monospace', fontWeight: 700, fontSize: '13px', borderColor: '#1e293b' }}
+                    >
+                      {row.ticker}
+                      {isMissing && (
+                        <span
+                          style={{ marginLeft: 4, color: '#ef4444', fontSize: 8, cursor: 'help', verticalAlign: 'middle' }}
+                          title={row.error || 'Pricing data unavailable — cost basis assumed $0 or ticker delisted.'}
+                        >●</span>
+                      )}
+                      {isFallback && (
+                        <span
+                          style={{ marginLeft: 4, color: '#f59e0b', fontSize: 8, cursor: 'help', verticalAlign: 'middle' }}
+                          title="Using yfinance fallback — live parquet data unavailable."
+                        >●</span>
+                      )}
+                    </MuiTableCell>
+                    <MuiTableCell sx={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '12px', borderColor: '#1e293b' }}>
+                      {row.sector || '—'}
+                    </MuiTableCell>
+                    <MuiTableCell sx={{ color: '#e2e8f0', fontFamily: 'monospace', fontSize: '12px', borderColor: '#1e293b' }}>
+                      {(weight * 100).toFixed(1)}%
+                    </MuiTableCell>
+                    <MuiTableCell align="right" sx={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '12px', borderColor: '#1e293b' }}>
                       {row.shares ?? '—'}
-                    </td>
-                    <td className="px-3 py-1.5 text-text-2">
+                    </MuiTableCell>
+                    <MuiTableCell align="right" sx={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '12px', borderColor: '#1e293b' }}>
                       {row.mkt_value != null
                         ? `$${Number(row.mkt_value).toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-                        : '—'
-                      }
-                    </td>
-                    <td className={`px-3 py-1.5 font-bold ${pnlColor}`}>
-                      {row.pnl_pct != null
-                        ? `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}%`
-                        : '—'
-                      }
-                    </td>
-                    <td className="px-3 py-1.5 font-mono text-[10px]">
-                      {row.source === 'parquet' && (
-                        <span className="px-1.5 py-0.5 rounded bg-green/10 text-green font-bold border border-green/20">
-                          Live Parquet
+                        : '—'}
+                    </MuiTableCell>
+                    <MuiTableCell
+                      align="right"
+                      sx={{ fontFamily: 'monospace', fontWeight: 700, color: pnlColor, borderColor: '#1e293b' }}
+                    >
+                      {row.pnl_pct != null ? (
+                        <span style={{ whiteSpace: 'nowrap' }}>
+                          {pnlDollar != null
+                            ? `${pnlDollar >= 0 ? '+' : '-'}$${Math.abs(pnlDollar).toLocaleString('en-US')}`
+                            : ''
+                          }
+                          {' '}
+                          <span style={{ fontSize: '11px' }}>
+                            ({pnl >= 0 ? '+' : ''}{pnl.toFixed(2)}%)
+                          </span>
                         </span>
-                      )}
-                      {row.source === 'yfinance' && (
-                        <span className="px-1.5 py-0.5 rounded bg-amber/10 text-amber font-bold border border-amber/20">
-                          yfinance Fallback
-                        </span>
-                      )}
-                      {(row.source === 'missing' || !row.source) && (
-                        <span 
-                          className="px-1.5 py-0.5 rounded bg-red/10 text-red font-bold border border-red/20 cursor-help"
-                          title={row.error || "Pricing data unavailable. Cost basis assumed as $0 or ticker was delisted."}
-                        >
-                          Stale / Missing
-                        </span>
-                      )}
-                    </td>
-                  </tr>
+                      ) : '—'}
+                    </MuiTableCell>
+                  </MuiTableRow>
                 )
               })
             ) : (
-              <tr>
-                <td colSpan={7} className="text-center py-8 text-text-3 font-mono">
+              <MuiTableRow>
+                <MuiTableCell
+                  colSpan={6}
+                  sx={{ textAlign: 'center', py: 4, color: '#475569', fontFamily: 'monospace', fontSize: '12px', borderColor: '#1e293b' }}
+                >
                   NO ACTIVE HOLDINGS LOADED
-                </td>
-              </tr>
+                </MuiTableCell>
+              </MuiTableRow>
             )}
-          </tbody>
-        </table>
-      </div>
-    </>
+          </MuiTableBody>
+        </MuiTable>
+      </MuiTableContainer>
+    </div>
   )
 }
 
@@ -623,7 +655,9 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
     [h]
   )
   const sortedHoldings = useMemo(
-    () => [...(h.holdings ?? [])].sort((a, b) => Number(b.weight) - Number(a.weight)),
+    () => (h.holdings ?? [])
+      .filter(x => Number(x.weight) > 0)
+      .sort((a, b) => Number(b.weight) - Number(a.weight)),
     [h]
   )
   const maxSectorEntry = h.risk_radar?.sector_exposure?.[0]
