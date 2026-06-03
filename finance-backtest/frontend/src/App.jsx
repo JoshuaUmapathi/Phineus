@@ -3,7 +3,7 @@ import axios from 'axios'
 import {
   LayoutDashboard, BarChart2,
   SlidersHorizontal, ClipboardList,
-  ClipboardCheck, Bot, Search, Settings, Upload,
+  ClipboardCheck, Bot, Search, Settings, Upload, LogOut,
 } from 'lucide-react'
 import './App.css'
 import AiAnalystDrawer from './components/AiAnalystDrawer'
@@ -19,6 +19,9 @@ import { SuggestiveSearch } from '@/components/ui/suggestive-search'
 import StockDetail from './components/StockDetail'
 import SettingsTab from './components/SettingsTab'
 import PortfolioImportModal from './components/PortfolioImportModal'
+import LandingPage from './components/LandingPage'
+import { DemoPage as LoginPage } from './components/ui/login-page'
+import SignupPage from './components/SignupPage'
 
 const API_BASE = '/api'
 
@@ -34,8 +37,10 @@ export default function App() {
   const [data, setData]           = useState({ perf: null, metrics: null, holdings: null })
   const [loading, setLoading]     = useState(true)
   const [view, setView]           = useState('command')
+  const [currentScreen, setCurrentScreen] = useState('landing')
+  const [sessionUser, setSessionUser] = useState(null)
   const [isDemoMode, setIsDemoMode] = useState(false)
-  const [theme, setTheme]         = useState(() => localStorage.getItem('stratum-theme') || 'light')
+  const [theme, setTheme]         = useState(() => localStorage.getItem('stratum-theme') || 'dark')
   const [chatOpen, setChatOpen]   = useState(false)
   const [selectedHolding, setSelectedHolding] = useState(null)
   const [username, setUsername]   = useState(() => localStorage.getItem('stratum-username') || 'Joshua')
@@ -139,6 +144,36 @@ export default function App() {
   const strat = data.metrics?.find(m => m.Metric === 'Strategy')
   const spy   = data.metrics?.find(m => m.Metric === 'SPY')
 
+  if (currentScreen === 'landing') {
+    return <LandingPage onNavigate={setCurrentScreen} />
+  }
+
+  if (currentScreen === 'login') {
+    return (
+      <LoginPage 
+        onLogin={(user) => { 
+          setSessionUser(user)
+          setUsername(user.username)
+          setCurrentScreen('app') 
+        }} 
+        onNavigate={setCurrentScreen} 
+      />
+    )
+  }
+
+  if (currentScreen === 'signup') {
+    return (
+      <SignupPage 
+        onSignup={(user) => { 
+          setSessionUser(user)
+          setUsername(user.username)
+          setCurrentScreen('app') 
+        }} 
+        onNavigate={setCurrentScreen} 
+      />
+    )
+  }
+
   if (loading) {
     return (
       <div className="loading-screen">
@@ -187,6 +222,25 @@ export default function App() {
             title="AI Analyst Copilot (⌘K)"
           >
             <Bot size={15} />
+          </button>
+          {sessionUser && (
+            <div 
+              className="font-mono text-[10px] text-text-strong border border-border px-3 py-1.5 bg-surface-2 hover:bg-surface transition-colors flex items-center gap-1.5 h-[30px]" 
+              style={{ borderRadius: 'var(--radius, 0.625rem)' }}
+            >
+              <span className="w-1.5 h-1.5 bg-green" />
+              <span>{sessionUser.username}</span>
+            </div>
+          )}
+          <button
+            className="top-icon-button text-red hover:border-red"
+            onClick={() => {
+              setSessionUser(null)
+              setCurrentScreen('landing')
+            }}
+            title="Log Out Session"
+          >
+            <LogOut size={15} />
           </button>
           <AnimatedThemeToggler theme={theme} onThemeChange={setTheme} />
         </div>
