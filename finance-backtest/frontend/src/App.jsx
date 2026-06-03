@@ -21,7 +21,27 @@ import SettingsTab from './components/SettingsTab'
 import PortfolioImportModal from './components/PortfolioImportModal'
 import LandingPage from './components/LandingPage'
 import { DemoPage as LoginPage } from './components/ui/login-page'
-import SignupPage from './components/SignupPage'
+import { SignupPage } from './components/ui/signup-page'
+import { DotLoader } from '@/components/ui/dot-loader'
+
+const loaderFrames = [
+  [14, 7, 0, 8, 6, 13, 20],
+  [14, 7, 13, 20, 16, 27, 21],
+  [14, 20, 27, 21, 34, 24, 28],
+  [27, 21, 34, 28, 41, 32, 35],
+  [34, 28, 41, 35, 48, 40, 42],
+  [34, 28, 41, 35, 48, 42, 46],
+  [34, 28, 41, 35, 48, 42, 38],
+  [34, 28, 41, 35, 48, 30, 21],
+  [34, 28, 41, 48, 21, 22, 14],
+  [34, 28, 41, 21, 14, 16, 27],
+  [34, 28, 21, 14, 10, 20, 27],
+  [28, 21, 14, 4, 13, 20, 27],
+  [28, 21, 14, 12, 6, 13, 20],
+  [28, 21, 14, 6, 13, 20, 11],
+  [28, 21, 14, 6, 13, 20, 10],
+  [14, 6, 13, 20, 9, 7, 21],
+]
 
 const API_BASE = '/api'
 
@@ -174,11 +194,21 @@ export default function App() {
     )
   }
 
+
   if (loading) {
     return (
-      <div className="loading-screen">
-        <div className="spinner" />
-        <span className="loading-label">Loading portfolio</span>
+      <div className="loading-screen bg-bg">
+        <div className="flex items-center gap-4 border border-border bg-surface-2 p-5 font-mono text-[11px] text-text-strong rounded-none shadow-2xl">
+          <DotLoader
+            frames={loaderFrames}
+            className="gap-0.5"
+            dotClassName="bg-text-strong/15 [&.active]:bg-text-strong w-1.5 h-1.5"
+          />
+          <div className="flex flex-col gap-1">
+            <span className="uppercase tracking-widest font-black">Establishing Node Link</span>
+            <span className="text-text-3">Loading portfolio metrics...</span>
+          </div>
+        </div>
       </div>
     )
   }
@@ -192,7 +222,6 @@ export default function App() {
       <header className="top-bar">
         <div className="top-bar-logo">
           <div className="top-bar-logo-pip" />
-          <span>Stratum</span>
         </div>
         <div className="top-bar-actions">
           <SuggestiveSearch

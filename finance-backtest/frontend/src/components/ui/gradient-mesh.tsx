@@ -143,6 +143,8 @@ export function GradientMesh(props: NovatrixProps) {
     ...rest
   } = props;
 
+  const colorsKey = colors.join(",");
+
   useEffect(() => {
     if (!ctnDom.current) return;
 
@@ -159,7 +161,7 @@ export function GradientMesh(props: NovatrixProps) {
 
     const geometry = new Triangle(gl);
 
-    const rgbColors = colors.slice(0, 3).map(hexToRgb);
+    const rgbColors = colorsKey.split(",").slice(0, 3).map(hexToRgb);
     const uniforms: any = {
       uTime: { value: 0 },
       uSwirl: { value: swirl },
@@ -211,7 +213,7 @@ export function GradientMesh(props: NovatrixProps) {
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, [
-    colors, distortion, swirl, speed, scale,
+    colorsKey, distortion, swirl, speed, scale,
     offsetX, offsetY, rotation, waveAmp, waveFreq, waveSpeed, grain
   ]);
 

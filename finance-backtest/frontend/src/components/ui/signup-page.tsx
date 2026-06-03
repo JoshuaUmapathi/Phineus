@@ -14,7 +14,9 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Eye, EyeOff } from 'lucide-react'
 
-export function DemoPage({ onLogin, onNavigate }) {
+export function SignupPage({ onSignup, onNavigate }) {
+  const id = useId()
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -22,35 +24,35 @@ export function DemoPage({ onLogin, onNavigate }) {
   const [logText, setLogText] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || !password) {
-      setError('Please complete all credentials.')
+    if (!name || !email || !password) {
+      setError('Please complete all fields.')
       return
     }
     setError('')
     setLoading(true)
-    setLogText('Establishing secure SSH connection to Stratum core...')
+    setLogText('Provisioning systematic strategy environment...')
     setTimeout(() => {
-      setLogText('Validating cryptographic signature & checking IAM keys...')
+      setLogText('Binding database headers & schema definitions...')
       setTimeout(() => {
-        setLogText('Booting sandboxed factor workspace environment...')
+        setLogText('Optimizing factor vector workspace caches...')
         setTimeout(() => {
           setLoading(false)
-          onLogin({ username: email.split('@')[0] || 'stratum_quanter', tier: 'Professional' })
+          onSignup({ username: name.split(' ')[0] || 'stratum_quanter', tier: 'Professional' })
         }, 1500)
       }, 2000)
     }, 1500)
   }
 
-  const handleGoogleLogin = () => {
+  const handleGoogleSignup = () => {
     setLoading(true)
     setLogText('Connecting with Google Cloud IAM OAuth cluster...')
     setTimeout(() => {
-      setLogText('Verifying identity token & retrieving credentials...')
+      setLogText('Verifying single sign-on authentication details...')
       setTimeout(() => {
         setLoading(false)
-        onLogin({ username: 'google_quanter', tier: 'Professional' })
+        onSignup({ username: 'google_quanter', tier: 'Professional' })
       }, 2500)
     }, 2500)
   }
@@ -75,16 +77,16 @@ export function DemoPage({ onLogin, onNavigate }) {
                 <div>{logText}</div>
                 <div className="flex gap-2 items-center">
                   <span className="w-1.5 h-1.5 bg-text-strong animate-ping rounded-none" />
-                  <span>Configuring workspace console...</span>
+                  <span>Registering algorithm credentials...</span>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              <form onSubmit={handleFormSubmit} className="flex flex-col gap-6">
                 <FieldGroup className="rounded-none">
                   <div className="flex flex-col items-center gap-1 text-center">
-                    <h1 className="text-2xl font-bold text-text-strong font-mono uppercase tracking-wide">Login to your account</h1>
+                    <h1 className="text-2xl font-bold text-text-strong font-mono uppercase tracking-wide">Sign Up for Stratum</h1>
                     <p className="text-muted-foreground text-xs text-balance font-mono">
-                      Enter your credentials below to access the node
+                      We just need a few details to get you started.
                     </p>
                   </div>
                   {error && (
@@ -93,36 +95,40 @@ export function DemoPage({ onLogin, onNavigate }) {
                     </div>
                   )}
                   <Field className="rounded-none">
-                    <FieldLabel htmlFor="email" className="font-mono text-[10px] uppercase tracking-wider text-text-3">Email</FieldLabel>
+                    <Label htmlFor={`${id}-name`} className="font-mono text-[10px] uppercase tracking-wider text-text-3 font-semibold mb-1">Full name</Label>
                     <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="contact@stratum.ops" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      id={`${id}-name`} 
+                      placeholder="Matt Welsh" 
+                      type="text" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       required 
-                      className="rounded-none border-border-2 focus-visible:ring-text-strong"
+                      className="rounded-none border-border-2"
                     />
                   </Field>
                   <Field className="rounded-none">
-                    <div className="flex items-center w-full">
-                      <FieldLabel htmlFor="password" className="font-mono text-[10px] uppercase tracking-wider text-text-3">Password</FieldLabel>
-                      <a
-                        href="#"
-                        className="ml-auto text-[10px] font-mono uppercase tracking-wider underline-offset-4 hover:underline text-text-3 hover:text-text-strong"
-                      >
-                        Forgot Key?
-                      </a>
-                    </div>
+                    <Label htmlFor={`${id}-email`} className="font-mono text-[10px] uppercase tracking-wider text-text-3 font-semibold mb-1">Email</Label>
+                    <Input 
+                      id={`${id}-email`} 
+                      placeholder="contact@stratum.ops" 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                      className="rounded-none border-border-2"
+                    />
+                  </Field>
+                  <Field className="rounded-none">
+                    <Label htmlFor={`${id}-password`} className="font-mono text-[10px] uppercase tracking-wider text-text-3 font-semibold mb-1">Password</Label>
                     <div className="relative flex items-center">
-                      <Input 
-                        id="password" 
-                        placeholder="password" 
-                        type={showPassword ? "text" : "password"} 
+                      <Input
+                        id={`${id}-password`}
+                        placeholder="Enter your password"
+                        type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required 
-                        className="rounded-none border-border-2 focus-visible:ring-text-strong pr-10 w-full"
+                        required
+                        className="rounded-none border-border-2 w-full pr-10"
                       />
                       <button
                         type="button"
@@ -136,7 +142,7 @@ export function DemoPage({ onLogin, onNavigate }) {
                   </Field>
                   <Field className="rounded-none">
                     <Button type="submit" className="w-full bg-text-strong text-bg font-black font-mono text-xs uppercase tracking-wider hover:bg-text-2 transition-colors py-2.5 rounded-md border border-text-strong">
-                      Authenticate Access
+                      Sign Up
                     </Button>
                   </Field>
                   <FieldSeparator className="rounded-none font-mono text-[9px] uppercase tracking-widest text-text-3">Or continue with</FieldSeparator>
@@ -145,7 +151,7 @@ export function DemoPage({ onLogin, onNavigate }) {
                       className="flex gap-2 w-full border border-border-2 hover:bg-surface-2 transition-colors py-2 rounded-md justify-center font-mono text-xs uppercase tracking-wider" 
                       variant="outline" 
                       type="button"
-                      onClick={handleGoogleLogin}
+                      onClick={handleGoogleSignup}
                     >
                       <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
                         <path
@@ -165,16 +171,16 @@ export function DemoPage({ onLogin, onNavigate }) {
                           d="M5.645 11.845a7.07 7.07 0 0 1 0-2.09L1.87 6.7C1.19 8.1 0.82 9.68 0.82 11.3c0 1.62.37 3.2 1.05 4.6l3.775-3.055z"
                         />
                       </svg>
-                      <span>Login with Google</span>
+                      <span>Continue with Google</span>
                     </Button>
                     <FieldDescription className="text-center mt-2 font-mono text-[10px]">
-                      Don&apos;t have an account?{" "}
+                      Already have an account?{" "}
                       <a 
                         href="#" 
-                        onClick={(e) => { e.preventDefault(); onNavigate('signup'); }} 
+                        onClick={(e) => { e.preventDefault(); onNavigate('login'); }} 
                         className="underline underline-offset-4 text-text-strong font-black uppercase tracking-wider hover:text-text-2"
                       >
-                        Sign up
+                        Log In
                       </a>
                     </FieldDescription>
                   </Field>
