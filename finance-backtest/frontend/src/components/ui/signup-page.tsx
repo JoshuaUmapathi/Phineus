@@ -13,6 +13,27 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Eye, EyeOff } from 'lucide-react'
+import { DotLoader } from "@/components/ui/dot-loader"
+import stratumLogo from "../../Phineus-Logo.jpg"
+
+const loaderFrames = [
+  [14, 7, 0, 8, 6, 13, 20],
+  [14, 7, 13, 20, 16, 27, 21],
+  [14, 20, 27, 21, 34, 24, 28],
+  [27, 21, 34, 28, 41, 32, 35],
+  [34, 28, 41, 35, 48, 40, 42],
+  [34, 28, 41, 35, 48, 42, 46],
+  [34, 28, 41, 35, 48, 42, 38],
+  [34, 28, 41, 35, 48, 30, 21],
+  [34, 28, 41, 48, 21, 22, 14],
+  [34, 28, 41, 21, 14, 16, 27],
+  [34, 28, 21, 14, 10, 20, 27],
+  [28, 21, 14, 4, 13, 20, 27],
+  [28, 21, 14, 12, 6, 13, 20],
+  [28, 21, 14, 6, 13, 20, 11],
+  [28, 21, 14, 6, 13, 20, 10],
+  [14, 6, 13, 20, 9, 7, 21],
+]
 
 export function SignupPage({ onSignup, onNavigate }) {
   const id = useId()
@@ -34,9 +55,9 @@ export function SignupPage({ onSignup, onNavigate }) {
     setLoading(true)
     setLogText('Provisioning systematic strategy environment...')
     setTimeout(() => {
-      setLogText('Binding database headers & schema definitions...')
+      setLogText(prev => prev + '\nBinding database headers & schema definitions...')
       setTimeout(() => {
-        setLogText('Optimizing factor vector workspace caches...')
+        setLogText(prev => prev + '\nOptimizing factor vector workspace caches...')
         setTimeout(() => {
           setLoading(false)
           onSignup({ username: name.split(' ')[0] || 'stratum_quanter', tier: 'Professional' })
@@ -49,7 +70,7 @@ export function SignupPage({ onSignup, onNavigate }) {
     setLoading(true)
     setLogText('Connecting with Google Cloud IAM OAuth cluster...')
     setTimeout(() => {
-      setLogText('Verifying single sign-on authentication details...')
+      setLogText(prev => prev + '\nVerifying single sign-on authentication details...')
       setTimeout(() => {
         setLoading(false)
         onSignup({ username: 'google_quanter', tier: 'Professional' })
@@ -67,17 +88,26 @@ export function SignupPage({ onSignup, onNavigate }) {
             aria-label="home" 
             className="flex gap-2 items-center"
           >
-            <div className="w-4 h-4 bg-text-strong border border-text-strong rounded-none" />
+            <img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain" />
           </a>
         </div>
         <div className="flex flex-1 w-full items-center justify-center">
           <div className="w-full max-w-[340px]">
             {loading ? (
-              <div className="border border-border-2 bg-bg p-4 font-mono text-[10px] text-text-strong h-[120px] whitespace-pre-line flex flex-col justify-between rounded-none">
-                <div>{logText}</div>
-                <div className="flex gap-2 items-center">
-                  <span className="w-1.5 h-1.5 bg-text-strong animate-ping rounded-none" />
-                  <span>Registering algorithm credentials...</span>
+              <div className="border border-border-2 bg-surface-2 p-5 font-mono text-[10px] text-text-strong flex flex-col gap-4 shadow-2xl rounded-none min-h-[160px]">
+                <div className="flex items-center gap-4">
+                  <DotLoader
+                    frames={loaderFrames}
+                    className="gap-0.5"
+                    dotClassName="bg-text-strong/15 [&.active]:bg-text-strong w-1.5 h-1.5"
+                  />
+                  <div className="flex flex-col gap-0.5">
+                    <span className="uppercase tracking-widest font-black text-[11px]">Establishing Link</span>
+                    <span className="text-text-3 text-[9px]">Please stand by...</span>
+                  </div>
+                </div>
+                <div className="text-text-2 text-[9px] border-t border-border-2 pt-3 h-[70px] whitespace-pre-line leading-relaxed overflow-y-auto scrollbar-none">
+                  {logText}
                 </div>
               </div>
             ) : (

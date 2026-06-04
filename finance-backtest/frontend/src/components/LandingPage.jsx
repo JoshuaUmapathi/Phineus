@@ -16,6 +16,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 import { ContainerScroll } from '@/components/ui/container-scroll-animation'
 import FUIBentoGridDark from '@/components/ui/bento'
 import appScreenshot from '../screenshot_full.png'
+import stratumLogo from '../Phineus-Logo.jpg'
 
 const BASE_NOISE = [
   -0.1, 0.25, -0.15, 0.3, -0.05, 0.12, -0.22, 0.35, -0.08, 0.18,
@@ -338,7 +339,7 @@ export default function LandingPage({ onNavigate }) {
               onClick={() => { setActiveTab('home'); setMenuOpen(false); }} 
               className="flex items-center gap-2 cursor-pointer focus:outline-none"
             >
-              <div className="w-3.5 h-3.5 bg-text-strong border border-text-strong rounded-none" />
+              <img src={stratumLogo} alt="Stratum Logo" className="h-5 w-auto object-contain" />
             </button>
           </div>
 
@@ -1197,7 +1198,7 @@ export default function LandingPage({ onNavigate }) {
       <footer className="w-full border-t border-border-2 bg-surface px-6 py-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-[10px] text-text-3">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-text-strong" />
+            <img src={stratumLogo} alt="Stratum Logo" className="h-3.5 w-auto object-contain" />
             <span className="font-bold tracking-wider uppercase text-text-strong font-black">STRATUM V1.2.0</span>
           </div>
           <div className="flex gap-6 font-semibold uppercase tracking-wider">

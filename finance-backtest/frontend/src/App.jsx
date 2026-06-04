@@ -6,6 +6,7 @@ import {
   ClipboardCheck, Bot, Search, Settings, Upload, LogOut,
 } from 'lucide-react'
 import './App.css'
+import stratumLogo from './Phineus-Logo.jpg'
 import AiAnalystDrawer from './components/AiAnalystDrawer'
 
 import LivePortfolio  from './components/LivePortfolio'
@@ -221,7 +222,7 @@ export default function App() {
       {/* ── Top Bar ──────────────────────────────────────────────── */}
       <header className="top-bar">
         <div className="top-bar-logo">
-          <div className="top-bar-logo-pip" />
+          <img src={stratumLogo} alt="Stratum Logo" className="h-5 w-auto object-contain" />
         </div>
         <div className="top-bar-actions">
           <SuggestiveSearch
