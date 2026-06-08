@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useId } from "react"
+import { motion } from "framer-motion"
 import { GradientMesh } from "@/components/ui/gradient-mesh"
 import {
   Field,
@@ -77,7 +78,12 @@ export function DemoPage({ onLogin, onNavigate }) {
   }
 
   return (
-    <div className="grid min-h-svh lg:grid-cols-2 bg-bg text-text rounded-none">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
+      animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="grid min-h-svh lg:grid-cols-2 bg-bg text-text rounded-none"
+    >
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a 
@@ -86,7 +92,7 @@ export function DemoPage({ onLogin, onNavigate }) {
             aria-label="home" 
             className="flex gap-2 items-center"
           >
-            <img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain" />
+            <img src={stratumLogo} alt="Stratum Logo" className="h-10 w-auto object-contain invert mix-blend-screen brightness-150" />
           </a>
         </div>
         <div className="flex flex-1 w-full items-center justify-center">
@@ -237,6 +243,6 @@ export function DemoPage({ onLogin, onNavigate }) {
           <span className="text-xs text-text-2 font-semibold">Active Node Connection: verified (TLS 1.3)</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

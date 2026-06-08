@@ -3,7 +3,7 @@ import axios from 'axios'
 import {
   LayoutDashboard, BarChart2,
   SlidersHorizontal, ClipboardList,
-  ClipboardCheck, Bot, Search, Settings, Upload, LogOut,
+  ClipboardCheck, Bot, Search, Settings, Upload, LogOut, HelpCircle
 } from 'lucide-react'
 import './App.css'
 import stratumLogo from './Phineus-Logo.jpg'
@@ -21,6 +21,8 @@ import StockDetail from './components/StockDetail'
 import SettingsTab from './components/SettingsTab'
 import PortfolioImportModal from './components/PortfolioImportModal'
 import LandingPage from './components/LandingPage'
+import FaqTab from './components/FaqTab'
+import { BackgroundPaths } from '@/components/ui/background-paths'
 import { DemoPage as LoginPage } from './components/ui/login-page'
 import { SignupPage } from './components/ui/signup-page'
 import { DotLoader } from '@/components/ui/dot-loader'
@@ -52,6 +54,7 @@ const NAV = [
   { id: 'backtest', label: 'Backtest Lab',       icon: BarChart2         },
   { id: 'blotter',  label: 'Execution Blotter', icon: ClipboardList     },
   { id: 'audit',    label: 'Evaluator Audit',   icon: ClipboardCheck    },
+  { id: 'faq',      label: 'FAQ',               icon: HelpCircle        },
 ]
 
 export default function App() {
@@ -222,7 +225,7 @@ export default function App() {
       {/* ── Top Bar ──────────────────────────────────────────────── */}
       <header className="top-bar">
         <div className="top-bar-logo">
-          <img src={stratumLogo} alt="Stratum Logo" className="h-5 w-auto object-contain" />
+          <img src={stratumLogo} alt="Stratum Logo" className="h-10 w-auto object-contain invert mix-blend-screen brightness-150" />
         </div>
         <div className="top-bar-actions">
           <SuggestiveSearch
@@ -333,8 +336,9 @@ export default function App() {
             )}
             {view === 'screener' && <AlphaScreener />}
             {view === 'backtest' && <BacktestLab perf={data.perf} />}
-            {view === 'blotter'  && <TradeBlotter holdings={data.holdings?.holdings} />}
+            {view === 'blotter'  && <TradeBlotter holdings={data.holdings?.holdings} livePositions={data.holdings?.positions} />}
             {view === 'audit'    && <EvaluatorAudit />}
+            {view === 'faq'      && <FaqTab />}
             {view === 'settings' && (
               <SettingsTab 
                 username={username} 

@@ -5,7 +5,7 @@ import { mockAlpacaPositions, mockHoldings } from '../data/mockFallbackData'
 const API = '/api'
 const AUM = 1_000_000
 
-export default function TradeBlotter({ holdings: propHoldings }) {
+export default function TradeBlotter({ holdings: propHoldings, livePositions }) {
   const [positions, setPositions]   = useState([])
   const [weights, setWeights]       = useState([])
   const [loading, setLoading]       = useState(true)
@@ -17,8 +17,16 @@ export default function TradeBlotter({ holdings: propHoldings }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const pR = await axios.get(`${API}/portfolio/alpaca_positions`)
-        setPositions(pR.data.positions || [])
+        if (livePositions && livePositions.length > 0) {
+          setPositions(livePositions.map(p => ({
+            symbol: p.ticker,
+            qty: p.shares,
+            current_price: p.price
+          })))
+        } else {
+          const pR = await axios.get(`${API}/portfolio/alpaca_positions`)
+          setPositions(pR.data.positions || [])
+        }
       } catch {
         setPositions(mockAlpacaPositions.positions)
       }

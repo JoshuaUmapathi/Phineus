@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import axios from "axios";
 import { X, UploadCloud, FileText, CheckCircle, AlertTriangle } from "lucide-react";
+import BrokerConnect from "./BrokerConnect";
 
 export default function PortfolioImportModal({ isOpen, onClose, onImportSuccess }) {
   const [parsedData, setParsedData] = useState(null); // { headers: [], rows: [] }
@@ -146,24 +147,39 @@ export default function PortfolioImportModal({ isOpen, onClose, onImportSuccess 
 
         {/* Content Body */}
         {!parsedData ? (
-          /* Dropzone UI */
-          <div 
-            {...getRootProps()} 
-            className={`border-dashed border-2 p-8 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center gap-3
-              ${isDragActive ? "border-green bg-green-dim/5" : "border-border-2 hover:border-border hover:bg-surface-2"}
-            `}
-            style={{ borderRadius: "var(--radius, 0.625rem)" }}
-          >
-            <input {...getInputProps()} />
-            <UploadCloud size={36} className={`transition-colors ${isDragActive ? "text-green animate-bounce" : "text-text-3"}`} />
-            <div>
-              <p className="font-sans font-medium text-[13px] text-text-strong">
-                {isDragActive ? "Drop your CSV file here..." : "Drag & drop your portfolio CSV file here"}
-              </p>
-              <p className="font-mono text-[10px] text-text-3 mt-1">or click to browse local files</p>
+          <div className="flex flex-col gap-4 w-full">
+            {/* Dropzone UI */}
+            <div 
+              {...getRootProps()} 
+              className={`border-dashed border-2 p-8 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center gap-3
+                ${isDragActive ? "border-green bg-green-dim/5" : "border-border-2 hover:border-border hover:bg-surface-2"}
+              `}
+              style={{ borderRadius: "var(--radius, 0.625rem)" }}
+            >
+              <input {...getInputProps()} />
+              <UploadCloud size={36} className={`transition-colors ${isDragActive ? "text-green animate-bounce" : "text-text-3"}`} />
+              <div>
+                <p className="font-sans font-medium text-[13px] text-text-strong">
+                  {isDragActive ? "Drop your CSV file here..." : "Drag & drop your portfolio CSV file here"}
+                </p>
+                <p className="font-mono text-[10px] text-text-3 mt-1">or click to browse local files</p>
+              </div>
+              <div className="border border-border-2 px-2 py-1 font-mono text-[9px] text-text-3 bg-surface-2">
+                SUPPORTED: Standard comma-separated .csv
+              </div>
             </div>
-            <div className="border border-border-2 px-2 py-1 font-mono text-[9px] text-text-3 bg-surface-2">
-              SUPPORTED: Standard comma-separated .csv
+
+            <div className="flex items-center gap-4 my-2 w-full">
+              <div className="h-px bg-border-2 flex-1"></div>
+              <span className="font-mono text-[10px] text-text-3 uppercase">OR</span>
+              <div className="h-px bg-border-2 flex-1"></div>
+            </div>
+
+            <div className="flex justify-center w-full">
+              <BrokerConnect onSyncSuccess={(data) => {
+                onImportSuccess(data);
+                onClose();
+              }} />
             </div>
           </div>
         ) : (

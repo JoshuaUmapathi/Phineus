@@ -13,8 +13,8 @@ export default function FUIBentoGridDark() {
           description="Run sub-second portfolio simulations over decades of tick data. Instantly audit allocations using streamlined keyboard shortcuts and active terminal prompts."
           graphic={
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity group-hover:opacity-100 group-hover:mix-blend-normal transition-all duration-500 scale-100 group-hover:scale-105" 
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop')" }} 
+              className="absolute inset-0 bg-cover bg-center" 
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop')" }} 
             />
           }
           className="lg:col-span-2 rounded-2xl"
@@ -25,8 +25,8 @@ export default function FUIBentoGridDark() {
           description="Access over 20 years of split- and dividend-adjusted US equity market data compiled straight from institutional-grade data nodes and APIs."
           graphic={
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity group-hover:opacity-100 group-hover:mix-blend-normal transition-all duration-500 scale-100 group-hover:scale-105" 
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop')" }} 
+              className="absolute inset-0 bg-cover bg-center" 
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop')" }} 
             />
           }
           className="lg:col-span-2 rounded-2xl"
@@ -37,8 +37,8 @@ export default function FUIBentoGridDark() {
           description="Integrate read-only API connectors for Alpaca, Interactive Brokers, and Tradier. Compute allocations on secure decentralized nodes."
           graphic={
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity group-hover:opacity-100 group-hover:mix-blend-normal transition-all duration-500 scale-100 group-hover:scale-105" 
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop')" }} 
+              className="absolute inset-0 bg-cover bg-center" 
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop')" }} 
             />
           }
           className="lg:col-span-2 rounded-2xl"

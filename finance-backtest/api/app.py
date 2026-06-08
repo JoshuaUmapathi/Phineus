@@ -23,7 +23,10 @@ app.add_middleware(
 
 
 # Establish robust absolute paths relative to the file location to prevent relative path mismatches
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 PERF_PATH = os.path.join(BASE_DIR, "outputs", "performance.csv")
 LOG_PATH = os.path.join(BASE_DIR, "outputs", "rebalance_log_v7.csv")
 METRICS_PATH = os.path.join(BASE_DIR, "outputs", "metrics.csv")
@@ -406,6 +409,36 @@ def get_alpaca_positions():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch Alpaca positions: {str(e)}")
 
+@app.post("/api/brokerage/link")
+def create_link_token(user_id: str):
+    # Example using SnapTrade or Plaid SDK
+    # token = snaptrade_client.portfolio_management.generate_token(user_id)
+    return {"link_token": "token_string_here"}
+
+@app.post("/api/brokerage/sync")
+def sync_brokerage_account(access_token: str):
+    # 1. Fetch raw holdings from the broker API via the aggregator
+    # raw_holdings = broker_api.get_holdings(access_token)
+    
+    # Placeholder to ensure the stub code executes without error
+    raw_holdings = [
+        {"symbol": "AAPL", "quantity": 100, "average_buy_price": 150.0},
+        {"symbol": "MSFT", "quantity": 50, "average_buy_price": 300.0}
+    ]
+    
+    # 2. Map the broker's response to your standard format
+    formatted_positions = []
+    for item in raw_holdings:
+        formatted_positions.append({
+            "ticker": item["symbol"],
+            "shares": float(item["quantity"]),
+            "cost_basis": float(item["average_buy_price"])
+        })
+        
+    # 3. Route through your existing enrichment logic
+    # This automatically applies prices, sectors, health scores, and risk radar
+    return analyze_manual_portfolio({"positions": formatted_positions})
+
 @app.post("/api/portfolio/execute_rebalance")
 def execute_rebalance(params: dict = None):
     """
@@ -421,6 +454,9 @@ def execute_rebalance(params: dict = None):
         df = pd.read_csv(LOG_PATH)
         latest_date = df['date'].max()
         recent = df[df['date'] == latest_date].copy()
+        
+        # Drop duplicates to prevent ambiguous Series truth value errors
+        recent = recent.drop_duplicates(subset=['ticker'])
         
         # Target weight Series indexed by ticker
         target_weights = recent.set_index('ticker')['weight']

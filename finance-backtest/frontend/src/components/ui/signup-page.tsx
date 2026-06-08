@@ -88,7 +88,7 @@ export function SignupPage({ onSignup, onNavigate }) {
             aria-label="home" 
             className="flex gap-2 items-center"
           >
-            <img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain" />
+            <img src={stratumLogo} alt="Stratum Logo" className="h-10 w-auto object-contain invert mix-blend-screen brightness-150" />
           </a>
         </div>
         <div className="flex flex-1 w-full items-center justify-center">

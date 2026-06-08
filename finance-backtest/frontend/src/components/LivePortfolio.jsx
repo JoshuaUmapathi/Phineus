@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from 'react'
 import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, RadialBarChart, RadialBar } from 'recharts'
 import { X, CalendarDays, ChevronDown } from 'lucide-react'
 import DataQualityManifest from './DataQualityManifest'
+import LivePortfolioTracker from './LivePortfolioTracker'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/radar-chart'
 import { ChartContainer as PieChartContainer, ChartTooltip as PieChartTooltip, ChartTooltipContent as PieChartTooltipContent } from './ui/pie-chart'
 import { Calendar } from './ui/calendar'
@@ -1098,6 +1099,13 @@ export default function LivePortfolio({ holdings, perf, strat, spy, selectedDate
       <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
         <HoldingsTable holdings={sortedHoldings} loading={loading} />
       </div>
+
+      {/* ── Row D: Live Tracker ── */}
+      {(h.data_quality_manifest || h.source === 'live') && (
+        <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col mt-6">
+           <LivePortfolioTracker holdings={h.positions || h.holdings || sortedHoldings} perf={perf} />
+        </div>
+      )}
 
       {/* ── Detailed Modal Overlay ── */}
       {activeModal && (

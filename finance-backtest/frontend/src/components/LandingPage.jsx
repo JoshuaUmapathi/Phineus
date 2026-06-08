@@ -3,7 +3,8 @@ import {
   Terminal, Sliders, Sparkles, LineChart as ChartIcon,
   Activity, ShieldAlert, ArrowRight, Lock, Eye,
   RefreshCw, Play, Check, Server, Layers, Cpu,
-  Database, HelpCircle, Menu, X, ChevronRight
+  Database, HelpCircle, Menu, X, ChevronRight,
+  Building2, Landmark, Wallet
 } from 'lucide-react'
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, ReferenceArea
@@ -15,6 +16,8 @@ import { Button } from '@/components/ui/button'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
 import { ContainerScroll } from '@/components/ui/container-scroll-animation'
 import FUIBentoGridDark from '@/components/ui/bento'
+import { BackgroundPaths } from '@/components/ui/background-paths'
+import { Features8 } from '@/components/ui/features-8'
 import appScreenshot from '../screenshot_full.png'
 import stratumLogo from '../Phineus-Logo.jpg'
 
@@ -319,10 +322,12 @@ export default function LandingPage({ onNavigate }) {
   }, [hasQualityFactor])
 
   const menuItems = [
+    { name: 'Home', tab: 'home' },
     { name: 'Features', tab: 'features' },
     { name: 'Solutions', tab: 'solutions' },
     { name: 'Pricing', tab: 'pricing' },
     { name: 'About', tab: 'about' },
+    { name: 'FAQ', tab: 'faq' },
   ]
 
   return (
@@ -339,7 +344,7 @@ export default function LandingPage({ onNavigate }) {
               onClick={() => { setActiveTab('home'); setMenuOpen(false); }} 
               className="flex items-center gap-2 cursor-pointer focus:outline-none"
             >
-              <img src={stratumLogo} alt="Stratum Logo" className="h-5 w-auto object-contain" />
+              <img src={stratumLogo} alt="Stratum Logo" className="h-9 w-auto object-contain invert mix-blend-screen brightness-150" />
             </button>
           </div>
 
@@ -359,24 +364,6 @@ export default function LandingPage({ onNavigate }) {
               </button>
             ))}
           </nav>
-
-          <div className="hidden md:flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="font-mono text-xs uppercase tracking-wider rounded-md"
-              onClick={() => onNavigate('login')}
-            >
-              Sign In
-            </Button>
-            <Button
-              size="sm"
-              className="bg-text-strong text-bg hover:bg-text-2 font-mono text-xs uppercase tracking-wider rounded-md font-black border border-text-strong"
-              onClick={() => onNavigate('login')}
-            >
-              Get Started
-            </Button>
-          </div>
 
           {/* Mobile menu trigger */}
           <button
@@ -408,28 +395,14 @@ export default function LandingPage({ onNavigate }) {
                   {item.name}
                 </button>
               ))}
-              <div className="flex flex-col gap-3 pt-4 border-t border-border-2">
-                <Button
-                  variant="outline"
-                  className="w-full text-xs uppercase tracking-wider rounded-md py-2"
-                  onClick={() => { setMenuOpen(false); onNavigate('login'); }}
-                >
-                  Sign In
-                </Button>
-                <Button
-                  className="w-full bg-text-strong text-bg hover:bg-text-2 text-xs uppercase tracking-wider rounded-md py-2 font-black"
-                  onClick={() => { setMenuOpen(false); onNavigate('login'); }}
-                >
-                  Get Started
-                </Button>
-              </div>
+              {/* Auth buttons removed from mobile menu */}
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
       {/* ── MAIN BODY CONTENT ────────────────────────────────────── */}
-      <main className="pt-28 md:pt-36 overflow-hidden">
+      <main className="overflow-hidden">
         {/* Ambient Glow Graphics */}
         <div className="absolute inset-0 pointer-events-none isolate opacity-40 z-0">
           <div className="w-[30rem] h-[60rem] absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.01)_70%,transparent_100%)] [translate:-10%_-30%]" />
@@ -446,93 +419,20 @@ export default function LandingPage({ onNavigate }) {
               className="relative z-10"
             >
               {/* Hero Copy */}
-              <section className="px-6 text-center max-w-4xl mx-auto flex flex-col items-center gap-8 mb-20">
-                <AnimatedGroup variants={transitionVariants}>
-                  <div className="inline-flex items-center gap-2 border border-border-3 px-3 py-1 font-mono text-[9px] tracking-widest text-text-strong uppercase font-semibold">
-                    <span className="w-1.5 h-1.5 bg-text-strong animate-pulse" />
-                    Next-Gen Quantitative Engine
-                  </div>
-                  
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-text-strong leading-[1.05] tracking-tight uppercase mt-6 max-w-3xl mx-auto">
-                    The Quantitative <br />
-                    Operating System <br />
-                    For Factor Investing
-                  </h1>
-                  
-                  <p className="text-sm md:text-base text-text-2 max-w-xl leading-relaxed mt-4 font-sans">
-                    Test factor theories, backtest custom systematic strategies, stress test portfolio vulnerabilities, and let our interactive AI financial Copilot audit your investment decisions—all under a single high-performance console.
-                  </p>
-                </AnimatedGroup>
-
-                <AnimatedGroup
-                  variants={{
-                    container: {
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.05,
-                          delayChildren: 0.5,
-                        },
-                      },
-                    },
-                    ...transitionVariants,
-                  }}
-                  className="flex flex-col sm:flex-row items-center gap-4 mt-2"
-                >
-                  <Button
-                    onClick={() => setActiveTab('solutions')}
-                    className="flex items-center gap-2 bg-text-strong text-bg border border-text-strong px-6 py-3 font-mono text-xs font-black uppercase tracking-wider hover:bg-text-2 transition-all rounded-md"
-                  >
-                    Try Interactive Sandbox <ArrowRight size={14} />
-                  </Button>
-                  <Button
-                    onClick={() => onNavigate('login')}
-                    variant="outline"
-                    className="border border-border-3 px-6 py-3 font-mono text-xs font-semibold uppercase tracking-wider hover:bg-surface-2 transition-all text-text-2 hover:text-text-strong rounded-md"
-                  >
-                    Request Console Demo
-                  </Button>
-                </AnimatedGroup>
-              </section>
-
-              {/* Shell Terminal Mockup */}
-              <section className="px-6 max-w-4xl mx-auto mb-24">
-                <div className="border border-border-2 bg-surface font-mono text-[11px] leading-relaxed shadow-2xl flex flex-col h-[300px]">
-                  <div className="border-b border-border-2 px-4 py-2 bg-surface-2 flex items-center justify-between">
-                    <span className="text-text-3 font-semibold flex items-center gap-1.5">
-                      <Terminal size={12} className="text-text-strong" /> system_terminal.sh
-                    </span>
-                    <div className="flex gap-1.5">
-                      <span className="w-2.5 h-2.5 bg-border-3" />
-                      <span className="w-2.5 h-2.5 bg-border-3" />
+              <BackgroundPaths title="Stratum" onNavigate={() => onNavigate('login')}>
+                {/* Customer Logobar */}
+                <section className="py-8">
+                  <div className="max-w-5xl mx-auto px-6">
+                    <p className="text-center font-mono text-[9px] uppercase tracking-widest text-text-3 mb-8">Integrated Brokerages & Desk Connections</p>
+                    <div className="flex flex-wrap justify-center gap-12 items-center opacity-60 hover:opacity-100 transition-opacity duration-300 text-text-strong">
+                      <div className="flex items-center gap-2 font-black font-mono text-xs tracking-widest"><Building2 size={20} /> ALPACA</div>
+                      <div className="flex items-center gap-2 font-black font-mono text-xs tracking-widest"><Landmark size={20} /> INTERACTIVE BROKERS</div>
+                      <div className="flex items-center gap-2 font-black font-mono text-xs tracking-widest"><Wallet size={20} /> SNAPTRADE</div>
+                      <div className="flex items-center gap-2 font-black font-mono text-xs tracking-widest"><Building2 size={20} /> PLAID</div>
                     </div>
                   </div>
-                  <div className="p-4 flex-1 overflow-y-auto text-text-2 flex flex-col gap-1.5 scrollbar-thin">
-                    {logs.map((log, i) => (
-                      <div key={i} className="flex gap-2">
-                        <span className="text-text-strong select-none">&gt;</span>
-                        <span>{log}</span>
-                      </div>
-                    ))}
-                    <div className="flex gap-2">
-                      <span className="text-text-strong select-none">&gt;</span>
-                      <span className="w-2 h-4 bg-text animate-pulse" />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* Customer Logobar */}
-              <section className="bg-surface/50 border-t border-b border-border-2 py-12 mb-16">
-                <div className="max-w-5xl mx-auto px-6">
-                  <p className="text-center font-mono text-[9px] uppercase tracking-widest text-text-3 mb-8">Integrated Brokerages & Desk Connections</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-45 grayscale hover:opacity-75 transition-opacity duration-300">
-                    <img className="mx-auto h-5 dark:invert" src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia" />
-                    <img className="mx-auto h-4 dark:invert" src="https://html.tailus.io/blocks/customers/github.svg" alt="GitHub" />
-                    <img className="mx-auto h-4 dark:invert" src="https://html.tailus.io/blocks/customers/openai.svg" alt="OpenAI" />
-                    <img className="mx-auto h-5 dark:invert" src="https://html.tailus.io/blocks/customers/nike.svg" alt="Nike" />
-                  </div>
-                </div>
-              </section>
+                </section>
+              </BackgroundPaths>
             </motion.div>
           )}
 
@@ -543,7 +443,7 @@ export default function LandingPage({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="max-w-6xl mx-auto px-6 pb-24"
+              className="max-w-6xl mx-auto px-6 pt-28 md:pt-36 pb-24"
             >
               {/* Scrolling Mockup Animation */}
               <div className="flex flex-col overflow-hidden -mt-20 md:-mt-36">
@@ -590,417 +490,9 @@ export default function LandingPage({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="max-w-6xl mx-auto px-6 pb-24"
+              className="pt-28 md:pt-36"
             >
-              <div className="flex flex-col gap-4 mb-12 text-center">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">INTERACTIVE SIMULATION</span>
-                <h2 className="text-3xl sm:text-4xl font-black uppercase text-text-strong tracking-tight">Factor Backtest Sandbox</h2>
-                <p className="text-sm text-text-2 max-w-xl mx-auto font-sans leading-relaxed">
-                  Tweak alpha factor variables in real-time below to generate a dynamic backtest equity curve simulation comparing Stratum to the S&P 500 (SPY).
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                {/* Left Sliders Controls */}
-                <div className="lg:col-span-4 border border-border-2 bg-surface p-6 flex flex-col justify-between gap-6">
-                  <div className="flex flex-col gap-6">
-                    <h3 className="text-xs font-black uppercase tracking-wider font-mono text-text-strong m-0 border-b border-border-2 pb-3 flex items-center justify-between">
-                      Factor Weights Configuration
-                      <span className="text-[9px] bg-text-strong/10 text-text-strong px-1.5 py-0.5 border border-text-strong/20">LIVE ENGINE</span>
-                    </h3>
-
-                    {/* Risk overlap warning banner */}
-                    {momentum > 30 && volatility > 30 && (
-                      <div className="border border-text-strong/20 bg-text-strong/5 p-3 font-mono text-[9px] text-text-strong leading-normal rounded-none">
-                        ⚠️ <strong>RISK OVERLAP WARNING</strong>: Momentum & Volatility weights both exceed 30%. These factors exhibit high correlation (&rho; = 0.72), which might compound exposure to macro trend volatility.
-                      </div>
-                    )}
-
-                    {/* Momentum */}
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-between font-mono text-xs">
-                        <span className="text-text-2 font-semibold">Momentum (MOM)</span>
-                        <span className="text-text-strong font-bold">{momentum}%</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={momentum}
-                        onChange={(e) => {
-                          setMomentum(Number(e.target.value))
-                          triggerSimulationLog('momentum', e.target.value)
-                        }}
-                        className="w-full accent-text-strong bg-border border border-border cursor-pointer h-1 rounded-none"
-                      />
-                    </div>
-
-                    {/* Value */}
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-between font-mono text-xs">
-                        <span className="text-text-2 font-semibold">Value (VAL)</span>
-                        <span className="text-text-strong font-bold">{value}%</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={value}
-                        onChange={(e) => {
-                          setValue(Number(e.target.value))
-                          triggerSimulationLog('value', e.target.value)
-                        }}
-                        className="w-full accent-text-strong bg-border border border-border cursor-pointer h-1 rounded-none"
-                      />
-                    </div>
-
-                    {/* Low Volatility */}
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-between font-mono text-xs">
-                        <span className="text-text-2 font-semibold">Low Volatility (VOL)</span>
-                        <span className="text-text-strong font-bold">{volatility}%</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={volatility}
-                        onChange={(e) => {
-                          setVolatility(Number(e.target.value))
-                          triggerSimulationLog('volatility', e.target.value)
-                        }}
-                        className="w-full accent-text-strong bg-border border border-border cursor-pointer h-1 rounded-none"
-                      />
-                    </div>
-
-                    {/* Quality Factor - Dynamic Slider */}
-                    {hasQualityFactor && (
-                      <div className="flex flex-col gap-2 border-t border-border/20 pt-4">
-                        <div className="flex justify-between font-mono text-xs">
-                          <span className="text-text-strong font-semibold">Quality Factor (QUAL)</span>
-                          <span className="text-text-strong font-bold">{quality}%</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={quality}
-                          onChange={(e) => {
-                            setQuality(Number(e.target.value))
-                            triggerSimulationLog('quality', e.target.value)
-                          }}
-                          className="w-full accent-text-strong bg-border border border-border cursor-pointer h-1 rounded-none"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Terminal Conversational Alpha Panel */}
-                  <div className="border border-border bg-bg p-4 flex flex-col gap-3">
-                    <span className="font-mono text-[9px] uppercase tracking-widest text-text-3 font-semibold">Conversational Alpha Copilot</span>
-                    <div className="h-[100px] overflow-y-auto font-mono text-[9px] text-text-2 flex flex-col gap-1.5 border-b border-border/20 pb-2 scrollbar-thin">
-                      {copilotLogs.map((log, i) => (
-                        <div key={i} className="leading-relaxed">
-                          {log}
-                        </div>
-                      ))}
-                      {isGenerating && (
-                        <div className="flex items-center gap-1.5 text-text-strong">
-                          <span className="w-1.5 h-1.5 bg-text-strong animate-ping" />
-                          <span>Generating metric AST structure...</span>
-                        </div>
-                      )}
-                    </div>
-                    <form onSubmit={handleCopilotSubmit} className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Create a quality factor..."
-                        value={copilotPrompt}
-                        onChange={(e) => setCopilotPrompt(e.target.value)}
-                        disabled={isGenerating}
-                        className="flex-1 bg-surface border border-border-2 px-3 py-1 font-mono text-[10px] focus:outline-none rounded-none"
-                      />
-                      <button
-                        type="submit"
-                        disabled={isGenerating}
-                        className="bg-text-strong text-bg px-2.5 py-1 font-mono text-[9px] uppercase font-black hover:bg-text-2 transition-colors cursor-pointer"
-                      >
-                        Compile
-                      </button>
-                    </form>
-                  </div>
-
-                  {/* Simulation Modeling Settings */}
-                  <div className="border-t border-border-2 pt-6 flex flex-col gap-4">
-                    <h4 className="font-mono text-[10px] uppercase font-bold text-text-strong m-0">Stochastic & Macro Controls</h4>
-                    
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-mono text-[9px] text-text-2 uppercase">Historical Crisis Shock</label>
-                      <select 
-                        value={shockMode} 
-                        onChange={(e) => setShockMode(e.target.value)}
-                        className="bg-surface border border-border-2 font-mono text-[10px] px-3 py-1.5 focus:outline-none rounded-none text-text-strong cursor-pointer"
-                      >
-                        <option value="none">None (Standard Drift)</option>
-                        <option value="2008">2008 Great Financial Crisis</option>
-                        <option value="2020">2020 COVID Market Shock</option>
-                      </select>
-                    </div>
-
-                    <div className="flex items-center justify-between font-mono text-[10px]">
-                      <span className="text-text-2 uppercase">Monte Carlo Cone (1,000 runs)</span>
-                      <button
-                        type="button"
-                        onClick={() => setIsMonteCarlo(!isMonteCarlo)}
-                        className={`w-9 h-5 border flex items-center p-0.5 cursor-pointer transition-colors duration-200 ${
-                          isMonteCarlo ? 'bg-text-strong border-text-strong justify-end' : 'bg-surface border-border-2 justify-start'
-                        }`}
-                      >
-                        <div className={`w-3.5 h-3.5 ${isMonteCarlo ? 'bg-bg' : 'bg-text-strong'}`} />
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between font-mono text-[10px]">
-                      <span className="text-text-2 uppercase">Shade WFA Periods</span>
-                      <button
-                        type="button"
-                        onClick={() => setIsWfaActive(!isWfaActive)}
-                        className={`w-9 h-5 border flex items-center p-0.5 cursor-pointer transition-colors duration-200 ${
-                          isWfaActive ? 'bg-text-strong border-text-strong justify-end' : 'bg-surface border-border-2 justify-start'
-                        }`}
-                      >
-                        <div className={`w-3.5 h-3.5 ${isWfaActive ? 'bg-bg' : 'bg-text-strong'}`} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Chart Visualization */}
-                <div className="lg:col-span-8 border border-border-2 bg-surface p-6 flex flex-col justify-between">
-                  <div className="flex items-center justify-between border-b border-border-2 pb-4 mb-4">
-                    <span className="font-mono text-xs font-bold text-text-strong uppercase">Simulated Equity Curve (5-Year Growth of $100k)</span>
-                    <div className="flex items-center gap-4 font-mono text-[10px]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 bg-text-strong" />
-                        <span className="text-text-2 font-semibold">Stratum Strategy</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 bg-border-3" />
-                        <span className="text-text-2 font-semibold">S&P 500 Benchmark</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Recharts Performance Area */}
-                  <div className="w-full h-[280px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={chartData} margin={{ top: 10, right: 5, left: -20, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorStrategy" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--text-strong)" stopOpacity={0.15}/>
-                            <stop offset="95%" stopColor="var(--text-strong)" stopOpacity={0}/>
-                          </linearGradient>
-                          <linearGradient id="colorSpy" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--border-3)" stopOpacity={0.05}/>
-                            <stop offset="95%" stopColor="var(--border-3)" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <XAxis
-                          dataKey="date"
-                          stroke="var(--border-3)"
-                          tick={{ fill: 'var(--text-3)', fontSize: 9, fontFamily: 'monospace' }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          stroke="var(--border-3)"
-                          tickFormatter={(val) => `$${val/1000}k`}
-                          tick={{ fill: 'var(--text-3)', fontSize: 9, fontFamily: 'monospace' }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: 'var(--surface)',
-                            borderColor: 'var(--border-2)',
-                            borderRadius: '0px',
-                            fontFamily: 'monospace',
-                            fontSize: '11px',
-                            color: 'var(--text)'
-                          }}
-                          itemStyle={{ color: 'var(--text)' }}
-                          labelStyle={{ color: 'var(--text-strong)', fontWeight: 'bold' }}
-                        />
-                        
-                        {/* WFA Training vs Testing shading blocks */}
-                        {isWfaActive && (
-                          <ReferenceArea 
-                            x1={chartData[0]?.date} 
-                            x2={chartData[35]?.date} 
-                            fill="var(--text-strong)" 
-                            fillOpacity={0.02} 
-                            label={{ 
-                              value: "IN-SAMPLE (TRAINING)", 
-                              fill: "var(--text-3)", 
-                              fontSize: 8, 
-                              position: "insideTopLeft", 
-                              fontFamily: "monospace" 
-                            }} 
-                          />
-                        )}
-                        {isWfaActive && (
-                          <ReferenceArea 
-                            x1={chartData[36]?.date} 
-                            x2={chartData[59]?.date} 
-                            fill="var(--border)" 
-                            fillOpacity={0.05} 
-                            label={{ 
-                              value: "OUT-OF-SAMPLE (TESTING)", 
-                              fill: "var(--text-3)", 
-                              fontSize: 8, 
-                              position: "insideTopRight", 
-                              fontFamily: "monospace" 
-                            }} 
-                          />
-                        )}
-
-                        {/* Monte Carlo Shaded Confidence Cone */}
-                        {isMonteCarlo && (
-                          <Area
-                            type="monotone"
-                            dataKey={['StrategyMin', 'StrategyMax']}
-                            stroke="none"
-                            fill="var(--text-strong)"
-                            fillOpacity={0.07}
-                            name="90% Confidence Interval"
-                          />
-                        )}
-
-                        <Area
-                          type="monotone"
-                          dataKey="Strategy"
-                          stroke="var(--text-strong)"
-                          strokeWidth={2}
-                          fillOpacity={1}
-                          fill="url(#colorStrategy)"
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="SPY"
-                          stroke="var(--border-3)"
-                          strokeWidth={1.5}
-                          strokeDasharray="4 4"
-                          fillOpacity={1}
-                          fill="url(#colorSpy)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Sandbox Metrics Summary */}
-                  <div className="grid grid-cols-3 gap-2 border-t border-border-2 pt-6 mt-8 font-mono">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[9px] text-text-3 font-semibold uppercase">EST. CAGR</span>
-                      <span className="text-sm font-black text-text-strong">{metrics.cagr}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[9px] text-text-3 font-semibold uppercase">SHARPE RATIO</span>
-                      <span className="text-sm font-black text-text-strong">{metrics.sharpe}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[9px] text-text-3 font-semibold uppercase">MAX DRAWDOWN</span>
-                      <span className="text-sm font-black text-text-strong text-red">{metrics.drawdown}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Extra Solutions Grid Panels (Correlation Heatmap & Custom Formula) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 items-stretch">
-                {/* Correlation Heatmap Grid */}
-                <div className="border border-border-2 bg-surface p-6 flex flex-col gap-4">
-                  <div>
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-text-strong m-0">Factor Correlation Heatmap</h3>
-                    <p className="text-[10px] text-text-3 font-mono mt-1 leading-relaxed">
-                      Pearson correlation coefficients (&rho;) between parameters. Orthogonal profiles ensure optimal risk diversification.
-                    </p>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center p-2">
-                    <div className="grid grid-cols-5 gap-1.5 font-mono text-[9px] w-full max-w-sm">
-                      {/* Grid Corner */}
-                      <div className="h-7" />
-                      {correlationMatrix.factors.map((f) => (
-                        <div key={f} className="flex items-center justify-center h-7 font-black text-text-strong border-b border-border/20 uppercase tracking-widest">{f}</div>
-                      ))}
-
-                      {correlationMatrix.factors.map((row, rowIndex) => (
-                        <React.Fragment key={row}>
-                          {/* Row Header */}
-                          <div className="flex items-center font-black text-text-strong justify-end pr-2.5 h-7 uppercase tracking-widest">{row}</div>
-                          {correlationMatrix.matrix[rowIndex].map((val, colIndex) => {
-                            const isHigh = Math.abs(val) > 0.7 && val !== 1.0
-                            const isDiag = rowIndex === colIndex
-                            return (
-                              <div
-                                key={colIndex}
-                                className={`flex flex-col items-center justify-center h-7 text-[10px] border transition-colors ${
-                                  isDiag 
-                                    ? 'bg-text-strong text-bg font-black border-text-strong' 
-                                    : isHigh 
-                                      ? 'bg-red/10 border-red/30 text-red font-bold' 
-                                      : 'bg-bg border-border/30 text-text-2'
-                                }`}
-                              >
-                                {val.toFixed(2)}
-                              </div>
-                            )
-                          })}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Custom Formula Builder Console */}
-                <div className="border border-border-2 bg-surface p-6 flex flex-col justify-between gap-4">
-                  <div>
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-text-strong m-0">Arbitrage Pricing Theory Builder</h3>
-                    <p className="text-[10px] text-text-3 font-mono mt-1 leading-relaxed">
-                      Custom factor returns computed based on asset pricing theory: E(R) = Rf + &sum; &beta;<sub>i</sub>(RP<sub>i</sub>)
-                    </p>
-                  </div>
-
-                  <div className="flex-1 flex flex-col gap-2.5 font-mono">
-                    <div className="flex items-center justify-between text-[9px] text-text-3 border-b border-border/20 pb-2">
-                      <span>Formula Input: Monaco_Console_v1.0</span>
-                      <span>Syntax: verified (APT standard)</span>
-                    </div>
-                    <textarea
-                      value={formula}
-                      onChange={(e) => setFormula(e.target.value)}
-                      placeholder="0.4 * MOM + 0.3 * VAL + 0.3 * VOL"
-                      rows={3}
-                      className="w-full bg-bg border border-border-2 p-3 font-mono text-[11px] leading-relaxed text-text-strong resize-none focus:outline-none focus:border-text-strong"
-                    />
-                    
-                    <div className="flex flex-col gap-1 text-[9px] text-text-2 bg-bg/50 p-2.5 border border-border/10">
-                      <div>Baseline Rate (Rf) = 4.25%</div>
-                      <div>Expected Return = 4.25% + (MOM * 11.20%) + (VAL * 6.50%) + (VOL * -1.80%){hasQualityFactor && " + (QUAL * 9.80%)"}</div>
-                      <div className="font-black text-text-strong mt-1">Expected APT Yield (E(Rp)): {(4.25 + (parsedFormula.momCoef * 11.20) + (parsedFormula.valCoef * 6.50) + (parsedFormula.volCoef * -1.80) + (hasQualityFactor ? parsedFormula.qualCoef * 9.80 : 0)).toFixed(2)}%</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="font-mono text-[9px] text-text-strong/85">{formulaStatus}</span>
-                    <button
-                      onClick={handleApplyFormula}
-                      className="bg-text-strong text-bg font-mono text-[9px] uppercase tracking-wider font-black px-4 py-2 hover:bg-text-2 border border-text-strong transition-colors cursor-pointer"
-                    >
-                      Apply Formula
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <Features8 />
             </motion.div>
           )}
 
@@ -1011,7 +503,7 @@ export default function LandingPage({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="max-w-5xl mx-auto px-6 pb-24"
+              className="max-w-5xl mx-auto px-6 pt-28 md:pt-36 pb-24"
             >
               <div className="flex flex-col gap-4 mb-16 text-center">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">ACCESS TIERS</span>
@@ -1113,7 +605,7 @@ export default function LandingPage({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="max-w-4xl mx-auto px-6 pb-24"
+              className="max-w-4xl mx-auto px-6 pt-28 md:pt-36 pb-24"
             >
               <div className="flex flex-col gap-4 mb-16 text-center">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">ABOUT THE PLATFORM</span>
@@ -1151,13 +643,18 @@ export default function LandingPage({ onNavigate }) {
               </AnimatedGroup>
             </motion.div>
           )}
-        </AnimatePresence>
-
-        {/* ── FAQ SECTION ─────────────────────────────────────────── */}
-        <section className="py-20 px-6 max-w-4xl mx-auto border-t border-border-2">
-          <div className="flex flex-col gap-4 mb-12 text-center">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">QUESTIONS & ANSWERS</span>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase text-text-strong tracking-tight">Frequently Asked Questions</h2>
+          {activeTab === 'faq' && (
+            <motion.div
+              key="faq"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-4xl mx-auto px-6 pt-28 md:pt-36 pb-24"
+            >
+              <div className="flex flex-col gap-4 mb-12 text-center mt-12">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">QUESTIONS & ANSWERS</span>
+                <h2 className="text-2xl sm:text-3xl font-black uppercase text-text-strong tracking-tight">Frequently Asked Questions</h2>
           </div>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="faq-1" className="border-border-2">
@@ -1190,15 +687,17 @@ export default function LandingPage({ onNavigate }) {
                 The AI Copilot uses our secure fine-tuned LLM console to audit your allocations. It inspects sector concentration limits, flags correlation anomalies, and proposes optimal strategy weight adjustments based on historical covariance.
               </AccordionContent>
             </AccordionItem>
-          </Accordion>
-        </section>
+              </Accordion>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* ── FOOTER ──────────────────────────────────────────────── */}
       <footer className="w-full border-t border-border-2 bg-surface px-6 py-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-[10px] text-text-3">
           <div className="flex items-center gap-2">
-            <img src={stratumLogo} alt="Stratum Logo" className="h-3.5 w-auto object-contain" />
+            <img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain invert mix-blend-screen brightness-150" />
             <span className="font-bold tracking-wider uppercase text-text-strong font-black">STRATUM V1.2.0</span>
           </div>
           <div className="flex gap-6 font-semibold uppercase tracking-wider">
