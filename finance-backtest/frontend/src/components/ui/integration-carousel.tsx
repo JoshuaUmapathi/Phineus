@@ -198,7 +198,7 @@ interface Integration {
 const INTEGRATIONS: Integration[] = [
   {
     name: "Bloomberg",
-    logo: "https://cdn.simpleicons.org/bloomberg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Bloomberg_L.P._logo.svg",
     category: "Data",
   },
   {
@@ -208,7 +208,7 @@ const INTEGRATIONS: Integration[] = [
   },
   {
     name: "Plaid",
-    logo: "https://cdn.simpleicons.org/plaid",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c0/Plaid_logo.svg",
     category: "Banking Data",
   },
   {
@@ -228,7 +228,7 @@ const INTEGRATIONS: Integration[] = [
   },
   {
     name: "TypeScript",
-    logo: "https://cdn.worldvectorlogo.com/logos/typescript.svg",
+    logo: "https://cdn.simpleicons.org/typescript",
     category: "Development",
   },
   {

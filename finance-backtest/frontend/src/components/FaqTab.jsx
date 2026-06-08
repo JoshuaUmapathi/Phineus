@@ -3,16 +3,13 @@ import React from 'react'
 const faqs = [
   {
     question: "What is Stratum?",
-    answer: "Stratum is an advanced quantitative backtesting and portfolio execution platform designed for algorithmic traders."
+    answer: "Stratum is an advanced quantitative portfolio evaluation platform designed for algorithmic traders."
   },
   {
     question: "How do I connect my live brokerage account?",
     answer: "You can use the 'Import CSV' button in the top navigation bar to securely connect your brokerage account via our integration aggregator, allowing for live portfolio sync and automated paper trading generation."
   },
-  {
-    question: "Where can I view my backtest results?",
-    answer: "Your backtest results are automatically loaded into the Backtest Lab, where you can view historical performance, risk metrics, and drawdown charts."
-  },
+
   {
     question: "How are the AI Insights generated?",
     answer: "AI Insights run on a local LLM that ingests your real-time portfolio metrics, risk radar telemetry, and current asset weightings to generate defensive or offensive posturing advice."

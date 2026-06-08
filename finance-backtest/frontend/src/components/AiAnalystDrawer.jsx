@@ -17,12 +17,6 @@ const SCREENER_CHIPS = [
   "Is there high concentration in the top assets?",
 ]
 
-const BACKTEST_CHIPS = [
-  "How does slippage affect my alpha?",
-  "What is the impact of commission fees?",
-  "Compare my Sharpe and Sortino ratios",
-]
-
 export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}, mode = 'drawer' }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -37,7 +31,6 @@ export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}
   // Decide suggestion chips based on active view
   const chips = useMemo(() => {
     if (currentView === 'screener') return SCREENER_CHIPS
-    if (currentView === 'backtest' || currentView === 'robustness') return BACKTEST_CHIPS
     return DEFAULT_CHIPS
   }, [currentView])
 
@@ -110,7 +103,7 @@ export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}
                   Quant Portfolio Intelligence
                 </h2>
                 <p className="text-[12px] text-text-3 leading-relaxed mb-6">
-                  The active backtest results, holdings weights, sector parameters, and metrics are hydrated directly into the copilot LLM workspace. Ask questions to optimize your strategy.
+                  The active holdings weights, sector parameters, and portfolio metrics are hydrated directly into the copilot LLM workspace. Ask questions to optimize your holdings.
                 </p>
                 
                 <div className="text-left">
@@ -209,7 +202,7 @@ export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}
 
             {portfolioContext.strategyKPIs?.CAGR && (
               <div className="bg-surface-3 border border-border-2 p-3 rounded-none">
-                <div className="text-[9px] font-mono text-text-3 uppercase mb-1 tracking-wider">Backtest CAGR</div>
+                <div className="text-[9px] font-mono text-text-3 uppercase mb-1 tracking-wider">Portfolio CAGR</div>
                 <div className="text-[16px] font-bold text-green font-mono">
                   {portfolioContext.strategyKPIs.CAGR}
                 </div>

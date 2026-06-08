@@ -11,7 +11,6 @@ import AiAnalystDrawer from './components/AiAnalystDrawer'
 
 import LivePortfolio  from './components/LivePortfolio'
 import AlphaScreener  from './components/AlphaScreener'
-import BacktestLab    from './components/BacktestLab'
 import TradeBlotter   from './components/TradeBlotter'
 import EvaluatorAudit from './components/EvaluatorAudit'
 import { mockPerf, mockMetrics, mockHoldings } from './data/mockFallbackData'
@@ -51,7 +50,6 @@ const API_BASE = '/api'
 const NAV = [
   { id: 'command',  label: 'Command Center',   icon: LayoutDashboard  },
   { id: 'screener', label: 'Alpha Screener',    icon: SlidersHorizontal },
-  { id: 'backtest', label: 'Backtest Lab',       icon: BarChart2         },
   { id: 'blotter',  label: 'Execution Blotter', icon: ClipboardList     },
   { id: 'audit',    label: 'Evaluator Audit',   icon: ClipboardCheck    },
   { id: 'faq',      label: 'FAQ',               icon: HelpCircle        },
@@ -335,7 +333,6 @@ export default function App() {
               />
             )}
             {view === 'screener' && <AlphaScreener />}
-            {view === 'backtest' && <BacktestLab perf={data.perf} />}
             {view === 'blotter'  && <TradeBlotter holdings={data.holdings?.holdings} livePositions={data.holdings?.positions} />}
             {view === 'audit'    && <EvaluatorAudit />}
             {view === 'faq'      && <FaqTab />}

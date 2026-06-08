@@ -4,7 +4,7 @@ import {
   Activity, ShieldAlert, ArrowRight, Lock, Eye,
   RefreshCw, Play, Check, Server, Layers, Cpu,
   Database, HelpCircle, Menu, X, ChevronRight,
-  Building2, Landmark, Wallet
+  Building2, Landmark, Wallet, Twitter, Github
 } from 'lucide-react'
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, ReferenceArea
@@ -18,6 +18,8 @@ import { ContainerScroll } from '@/components/ui/container-scroll-animation'
 import FUIBentoGridDark from '@/components/ui/bento'
 import { BackgroundPaths } from '@/components/ui/background-paths'
 import { Features8 } from '@/components/ui/features-8'
+import { MissionStatement } from '@/components/ui/mission-statement'
+import { Footer } from '@/components/ui/footer'
 import appScreenshot from '../screenshot_full.png'
 import stratumLogo from '../Phineus-Logo.jpg'
 
@@ -82,7 +84,7 @@ export default function LandingPage({ onNavigate }) {
     'Connecting to factor market data pipelines (IEX, AlphaVantage, Quandl)...',
     'Loading fundamental and technical factor databases... OK (12,450 tickers)',
     'Compiling vector space for Momentum (MOM), Value (B/M), and Volatility (VOL)...',
-    'Pre-heating backtesting simulator clusters...',
+    'Pre-heating evaluation clusters...',
     'System ready. Standing by for quantitative strategy parameters...'
   ], [])
 
@@ -102,7 +104,7 @@ export default function LandingPage({ onNavigate }) {
   // Periodic log simulator when sliders are adjusted
   const triggerSimulationLog = (factorName, val) => {
     const timestamp = new Date().toLocaleTimeString()
-    const logMsg = `[${timestamp}] REBALANCING: Factor '${factorName.toUpperCase()}' adjusted to ${val}%. Re-running multi-factor backtest...`
+    const logMsg = `[${timestamp}] REBALANCING: Factor '${factorName.toUpperCase()}' adjusted to ${val}%. Re-running multi-factor evaluation...`
     setLogs(prev => {
       const next = [...prev, logMsg]
       if (next.length > 8) next.shift() // keep terminal readable
@@ -110,7 +112,7 @@ export default function LandingPage({ onNavigate }) {
     })
   }
 
-  // Dynamic Backtest Equity Curve calculations
+  // Dynamic Portfolio Equity Curve calculations
   const chartData = useMemo(() => {
     const dataPoints = []
     let balance = 100000 // Initial capital: $100k
@@ -475,7 +477,7 @@ export default function LandingPage({ onNavigate }) {
                 <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold font-bold">CORE ARCHITECTURE</span>
                 <h2 className="text-3xl font-black uppercase text-text-strong tracking-tight">Built for Institutional Quantitative Execution</h2>
                 <p className="text-sm text-text-2 max-w-md mx-auto font-sans leading-relaxed">
-                  A high-performance research pipeline built to compile, backtest, and deploy systematic factor strategies.
+                  A high-performance research pipeline built to compile, evaluate, and deploy systematic factor portfolios.
                 </p>
               </div>
 
@@ -523,7 +525,7 @@ export default function LandingPage({ onNavigate }) {
                       <span className="text-[10px] font-mono text-text-3 uppercase font-semibold">/ forever</span>
                     </div>
                     <p className="text-[12px] text-text-2 font-sans leading-relaxed">
-                      Test framework features using simulated local mock assets. Access backtester libraries, screaming filters, and standard KPIs.
+                      Test framework features using simulated local mock assets. Access evaluation libraries, screaming filters, and standard KPIs.
                     </p>
                     <div className="border-t border-border-3 pt-4 flex flex-col gap-2 font-mono text-[11px] text-text-2">
                       <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> 15 Preset Tick Universe</div>
@@ -556,7 +558,7 @@ export default function LandingPage({ onNavigate }) {
                     </p>
                     <div className="border-t border-border-3 pt-4 flex flex-col gap-2 font-mono text-[11px] text-text-2">
                       <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> Full US Market Universe</div>
-                      <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> Unlimited Daily Backtesting</div>
+                      <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> Unlimited Daily Evaluations</div>
                       <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> Immersive AI Copilot Audit</div>
                       <div className="flex items-center gap-2"><Check size={12} className="text-text-strong" /> Custom Factor Importer</div>
                     </div>
@@ -605,42 +607,9 @@ export default function LandingPage({ onNavigate }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="max-w-4xl mx-auto px-6 pt-28 md:pt-36 pb-24"
+              className="pt-28 md:pt-36 pb-24"
             >
-              <div className="flex flex-col gap-4 mb-16 text-center">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-text-strong font-semibold">ABOUT THE PLATFORM</span>
-                <h2 className="text-3xl sm:text-4xl font-black uppercase text-text-strong tracking-tight font-sans">Quantitative Strategy Core</h2>
-                <p className="text-sm text-text-2 max-w-md mx-auto font-sans leading-relaxed">
-                  Stratum operations represent the next stage of open-architecture quantitative execution systems.
-                </p>
-              </div>
-
-              <AnimatedGroup preset="slide" className="flex flex-col gap-8">
-                <div className="border border-border-2 p-8 bg-surface">
-                  <h3 className="font-mono text-xs font-black uppercase tracking-wider text-text-strong mb-3">Our Mission</h3>
-                  <p className="text-xs text-text-2 leading-relaxed font-sans">
-                    We aim to democratize institutional-grade quantitative strategies. By combining granular vector models, real-time factor weightings, and AI-assisted explainability models, we bridge the gap between high-level theory and actual execution.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="border border-border-2 p-8 bg-surface flex flex-col gap-2">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-text-3">Encryption & Access</span>
-                    <span className="text-xs font-bold text-text-strong uppercase tracking-wide">Security Guarantee</span>
-                    <p className="text-[11px] text-text-2 leading-relaxed font-sans mt-2">
-                      All connection nodes operate under TLS 1.3 protocol guidelines. System APIs require read-only credentials, ensuring your brokerage assets cannot be traded or modified.
-                    </p>
-                  </div>
-
-                  <div className="border border-border-2 p-8 bg-surface flex flex-col gap-2">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-text-3">Active Infrastructure</span>
-                    <span className="text-xs font-bold text-text-strong uppercase tracking-wide">Node Deployment</span>
-                    <p className="text-[11px] text-text-2 leading-relaxed font-sans mt-2">
-                      Our computations run on decentralized backtesting nodes, returning strategy simulations within 200ms without clogging client threads.
-                    </p>
-                  </div>
-                </div>
-              </AnimatedGroup>
+              <MissionStatement />
             </motion.div>
           )}
           {activeTab === 'faq' && (
@@ -669,12 +638,6 @@ export default function LandingPage({ onNavigate }) {
                 Absolutely. All brokerage connections are strictly read-only. Stratum nodes are architected without trading access, meaning we cannot execute trades, withdraw funds, or change your brokerage settings.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="faq-3" className="border-border-2">
-              <AccordionTrigger>What historical data is used for backtesting?</AccordionTrigger>
-              <AccordionContent>
-                We compile up to 20 years of split- and dividend-adjusted US equity market data from institutional data nodes. Backtest calculations include transaction cost simulations and beta adjustments.
-              </AccordionContent>
-            </AccordionItem>
             <AccordionItem value="faq-4" className="border-border-2">
               <AccordionTrigger>Can I import custom factor metrics?</AccordionTrigger>
               <AccordionContent>
@@ -694,22 +657,37 @@ export default function LandingPage({ onNavigate }) {
       </main>
 
       {/* ── FOOTER ──────────────────────────────────────────────── */}
-      <footer className="w-full border-t border-border-2 bg-surface px-6 py-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-[10px] text-text-3">
-          <div className="flex items-center gap-2">
-            <img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain invert mix-blend-screen brightness-150" />
-            <span className="font-bold tracking-wider uppercase text-text-strong font-black">STRATUM V1.2.0</span>
-          </div>
-          <div className="flex gap-6 font-semibold uppercase tracking-wider">
-            <a href="#privacy" className="hover:text-text-strong transition-colors">Privacy Policy</a>
-            <a href="#terms" className="hover:text-text-strong transition-colors">Terms of Service</a>
-            <a href="#support" className="hover:text-text-strong transition-colors">Desk Support</a>
-          </div>
-          <div>
-            &copy; {new Date().getFullYear()} STRATUM OPERATIONS. ALL RIGHTS RESERVED.
-          </div>
-        </div>
-      </footer>
+      <Footer
+        logo={<img src={stratumLogo} alt="Stratum Logo" className="h-6 w-auto object-contain invert mix-blend-screen brightness-150" />}
+        brandName="STRATUM V1.2.0"
+        socialLinks={[
+          {
+            icon: <Twitter className="h-5 w-5" />,
+            href: "https://twitter.com",
+            label: "Twitter",
+          },
+          {
+            icon: <Github className="h-5 w-5" />,
+            href: "https://github.com",
+            label: "GitHub",
+          },
+        ]}
+        mainLinks={[
+          { href: "#features", label: "Features" },
+          { href: "#solutions", label: "Solutions" },
+          { href: "#pricing", label: "Pricing" },
+          { href: "#about", label: "About" },
+        ]}
+        legalLinks={[
+          { href: "#privacy", label: "Privacy Policy" },
+          { href: "#terms", label: "Terms of Service" },
+          { href: "#support", label: "Desk Support" },
+        ]}
+        copyright={{
+          text: `© ${new Date().getFullYear()} STRATUM OPERATIONS.`,
+          license: "ALL RIGHTS RESERVED.",
+        }}
+      />
     </div>
   )
 }
