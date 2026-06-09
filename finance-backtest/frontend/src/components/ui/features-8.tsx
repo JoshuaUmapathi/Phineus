@@ -168,7 +168,7 @@ export function Features8() {
                                     </div>
                                     <div className="space-y-2">
                                         <h2 className="text-xl font-bold uppercase tracking-wider text-text-strong transition">Built for AI</h2>
-                                        <p className="text-[11px] text-text-2 font-sans leading-relaxed">Leverage the Conversational Alpha Copilot to audit sector concentration limits and propose optimal strategy weight adjustments.</p>
+                                        <p className="text-[11px] text-text-2 font-sans leading-relaxed">Leverage the Conversational Alpha Copilot to audit sector concentration limits and analyzes portfolio weight variations.</p>
                                     </div>
                                 </div>
                                 <div className="before:bg-border-2 relative mt-6 before:absolute before:inset-0 before:mx-auto before:w-px sm:-my-6 sm:-mr-6">

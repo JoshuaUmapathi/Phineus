@@ -52,7 +52,7 @@ export function Features4() {
                             <Sparkles className="size-4 text-text-strong" />
                             <h3 className="text-sm font-bold uppercase tracking-wider text-text-strong">Built for AI</h3>
                         </div>
-                        <p className="text-[11px] font-sans text-text-2 leading-relaxed">Leverage the Conversational Alpha Copilot to audit sector concentration limits and propose optimal strategy weight adjustments.</p>
+                        <p className="text-[11px] font-sans text-text-2 leading-relaxed">Leverage the Conversational Alpha Copilot to audit sector concentration limits and analyzes portfolio weight variations.</p>
                     </div>
                 </div>
                 <div className="mt-24 w-full">

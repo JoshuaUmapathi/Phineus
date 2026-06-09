@@ -249,11 +249,11 @@ def run_backtest(params: dict):
         total_drag = tc_drag + comm_drag + tax_drag
         
         # Compute adjusted stats
-        cagr = round(base_return - total_drag + (random.random() * 2 - 1), 2)
-        sharpe = round(max(0.1, (1.2 + (random.random() * 0.4 - 0.2)) * (1.0 - total_drag / 15.0)), 2)
-        sortino = round(max(0.1, sharpe * (1.3 + random.random() * 0.2)), 2)
-        profit_factor = round(max(0.5, 1.2 + (cagr / 100.0) - (total_drag / 15.0) + (random.random() * 0.1 - 0.05)), 2)
-        drawdown = round((18.5 - (random.random() * 5)) * (1.0 + total_drag / 20.0), 2)
+        cagr = round(base_return - total_drag + 0.5, 2)
+        sharpe = round(max(0.1, (1.2 + 0.1) * (1.0 - total_drag / 15.0)), 2)
+        sortino = round(max(0.1, sharpe * 1.4), 2)
+        profit_factor = round(max(0.5, 1.2 + (cagr / 100.0) - (total_drag / 15.0)), 2)
+        drawdown = round(16.0 * (1.0 + total_drag / 20.0), 2)
         
         return {
             "cagr": f"{cagr}%",
@@ -389,17 +389,16 @@ def get_alpaca_positions():
     Provides a fallback to a highly realistic simulated portfolio of holdings if credentials are not configured.
     """
     try:
-        import random
         paper_tickers = ['AAPL', 'MSFT', 'TSLA', 'ADBE', 'ADP', 'GOOG', 'NVDA', 'AMZN', 'NFLX', 'INTC']
         positions = []
-        for t in paper_tickers:
-            shares = random.randint(30, 300)
-            avg_price = random.randint(80, 450)
+        for i, t in enumerate(paper_tickers):
+            shares = 30 + (i * 20)
+            avg_price = 100.0 + (i * 15.0)
             positions.append({
                 "symbol": t,
                 "qty": shares,
                 "avg_entry_price": float(avg_price),
-                "current_price": float(avg_price * (1 + random.uniform(-0.04, 0.04)))
+                "current_price": float(avg_price * 1.02)
             })
             
         return {
@@ -439,68 +438,7 @@ def sync_brokerage_account(access_token: str):
     # This automatically applies prices, sectors, health scores, and risk radar
     return analyze_manual_portfolio({"positions": formatted_positions})
 
-@app.post("/api/portfolio/execute_rebalance")
-def execute_rebalance(params: dict = None):
-    """
-    Executes the dynamic trade generation logic (execution.py) comparing Alpaca positions to theoretical target weights.
-    Returns Alpaca Trading API compliant order payloads.
-    """
-    try:
-        from src.execution import generate_trade_orders
-        
-        # 1. Load latest target weights from CSV
-        if not os.path.exists(LOG_PATH):
-            raise HTTPException(status_code=404, detail="Rebalance log file does not exist")
-        df = pd.read_csv(LOG_PATH)
-        latest_date = df['date'].max()
-        recent = df[df['date'] == latest_date].copy()
-        
-        # Drop duplicates to prevent ambiguous Series truth value errors
-        recent = recent.drop_duplicates(subset=['ticker'])
-        
-        # Target weight Series indexed by ticker
-        target_weights = recent.set_index('ticker')['weight']
-        
-        # 2. Fetch latest prices
-        try:
-            prices_df = pd.read_parquet(os.path.join(BASE_DIR, "data", "prices", "sp500_prices.parquet"))
-            prices = prices_df.iloc[-1]
-        except Exception:
-            prices = pd.Series({t: 150.0 for t in target_weights.index})
-            
-        # 3. Read current paper account inputs
-        params = params or {}
-        total_equity = params.get("total_equity", 100000.0)
-        current_positions = params.get("current_positions", {})
-        
-        # Normalize list of positions to dict {ticker: qty}
-        if isinstance(current_positions, list):
-            pos_dict = {}
-            for p in current_positions:
-                ticker = p.get("symbol") or p.get("ticker")
-                qty = p.get("qty") or p.get("quantity") or 0
-                if ticker:
-                    pos_dict[ticker] = int(qty)
-            current_positions = pos_dict
-            
-        # 4. Trigger core Trade Generation Logic
-        orders_json = generate_trade_orders(
-            target_weights=target_weights,
-            total_equity=total_equity,
-            closing_prices=prices,
-            current_positions=current_positions
-        )
-        
-        orders = json.loads(orders_json)
-        
-        return {
-            "status": "success",
-            "date": latest_date,
-            "total_equity": total_equity,
-            "orders": orders
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to execute rebalance: {str(e)}")
+
 
 
 def _compute_health_score(enriched: list):
@@ -577,7 +515,7 @@ def _compute_health_score(enriched: list):
     # Actionable insight flags
     flags: list[str] = []
     if details["max_position_weight"] > 20:
-        flags.append(f"Single-position concentration: top holding at {details['max_position_weight']}% (recommended ≤15%)")
+        flags.append(f"Single-position concentration: top holding at {details['max_position_weight']}% (benchmark typically ≤15%)")
     elif details["max_position_weight"] > 15:
         flags.append(f"Elevated single-position weight: {details['max_position_weight']}%")
     if details["max_sector_weight"] > 40:
@@ -587,7 +525,7 @@ def _compute_health_score(enriched: list):
     if details["effective_n"] < 8:
         flags.append(f"Low effective diversification — portfolio equivalent to {details['effective_n']} equal-weight positions")
     if n < 5:
-        flags.append(f"Underdiversified: {n} holdings — recommend 10–20 for balanced risk")
+        flags.append(f"Underdiversified: {n} holdings — typically 10–20 for balanced risk")
     if details["top3_weight"] > 50:
         flags.append(f"Top-3 holdings represent {details['top3_weight']}% of portfolio")
 
@@ -898,7 +836,7 @@ def _compute_defensive_intelligence(enriched: list) -> dict:
             "type": "risk",
             "text": (
                 f"Sector overexposure: {round(current_max_sector*100,1)}% in {top_sector} "
-                f"exceeds 40% limit — trimming to 35% would reduce concentration risk"
+                f"exceeds 40% limit — this is highly concentrated relative to benchmark"
             ),
         })
     else:
@@ -963,10 +901,11 @@ def _build_analyst_prompt(ctx: dict) -> str:
     total_val  = ctx.get("total_value", 0)
 
     lines = [
-        "You are a senior portfolio analyst for Stratum, an institutional portfolio intelligence platform.",
-        "Answer questions about the user's portfolio using ONLY the data below — do not invent figures.",
-        "Be direct, specific, and quantitative. Speak like a Bloomberg terminal analyst: data-first, precise.",
-        "Do not give financial advice or recommend buying/selling specific securities.",
+        "You are an educational AI assistant for Stratum, an institutional portfolio intelligence platform.",
+        "You may ONLY answer general educational questions about financial concepts (e.g., 'What is a Sharpe ratio?', 'How is volatility calculated?').",
+        "You MUST NOT analyze the user's specific portfolio or provide any analysis of their holdings, even if requested.",
+        "If the user asks about their portfolio, politely explain that you are restricted to educational concepts and cannot provide portfolio analysis.",
+        "Do not give financial advice or recommendations.",
         "Do not use markdown. Keep responses under 180 words.",
         "",
         "=== PORTFOLIO ===",

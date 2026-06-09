@@ -5,16 +5,16 @@ import { X, Send, Sparkles, AlertCircle, Briefcase, TrendingUp, PieChart, Shield
 const API_BASE = '/api'
 
 const DEFAULT_CHIPS = [
-  "What is my biggest portfolio risk?",
-  "How well diversified is my asset mix?",
-  "Am I overexposed to any sector?",
-  "Suggest a risk mitigation tactic",
+  "What is a Sharpe ratio?",
+  "How is covariance calculated?",
+  "Explain the concept of diversification.",
+  "What is tracking error?",
 ]
 
 const SCREENER_CHIPS = [
-  "Explain the ranking algorithm",
-  "Which alpha indicators are driving this universe?",
-  "Is there high concentration in the top assets?",
+  "What is alpha?",
+  "How does market capitalization affect volatility?",
+  "Explain beta in finance.",
 ]
 
 export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}, mode = 'drawer' }) {
@@ -103,7 +103,7 @@ export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}
                   Quant Portfolio Intelligence
                 </h2>
                 <p className="text-[12px] text-text-3 leading-relaxed mb-6">
-                  The active holdings weights, sector parameters, and portfolio metrics are hydrated directly into the copilot LLM workspace. Ask questions to optimize your holdings.
+                  The active holdings weights, sector parameters, and portfolio metrics are hydrated directly into the copilot LLM workspace. Ask educational questions about quantitative concepts.
                 </p>
                 
                 <div className="text-left">
@@ -166,7 +166,7 @@ export default function AiAnalystDrawer({ isOpen, onClose, portfolioContext = {}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                placeholder="Ask Copilot about risk parameters, covariance alignment, or optimization tips..."
+                placeholder="Ask Copilot about risk concepts, covariance definitions, or educational topics..."
                 disabled={loading}
                 className="flex-1 px-4 py-3 bg-surface border border-border-2 text-text text-[12px] font-mono outline-none rounded-none focus:border-border-3"
               />

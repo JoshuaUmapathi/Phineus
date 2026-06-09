@@ -647,7 +647,7 @@ export default function LandingPage({ onNavigate }) {
             <AccordionItem value="faq-5" className="border-border-2">
               <AccordionTrigger>How does the AI Copilot analyst operate?</AccordionTrigger>
               <AccordionContent>
-                The AI Copilot uses our secure fine-tuned LLM console to audit your allocations. It inspects sector concentration limits, flags correlation anomalies, and proposes optimal strategy weight adjustments based on historical covariance.
+                The AI Copilot uses our secure fine-tuned LLM console to audit your allocations. It inspects sector concentration limits, flags correlation anomalies, and analyzes portfolio weight variations based on historical covariance.
               </AccordionContent>
             </AccordionItem>
               </Accordion>

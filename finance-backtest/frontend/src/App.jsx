@@ -218,8 +218,13 @@ export default function App() {
   const rebalanceDate = data.holdings?.date
 
   return (
-    <div className="app-shell">
-
+    <div className="app-shell relative">
+      {/* DEMO DATA WATERMARK */}
+      <div className="fixed inset-0 pointer-events-none z-[9999] flex items-center justify-center opacity-10 overflow-hidden">
+        <div className="transform -rotate-45 text-[8rem] font-black text-red whitespace-nowrap">
+          [DEMO DATA - NOT REAL]
+        </div>
+      </div>
       {/* ── Top Bar ──────────────────────────────────────────────── */}
       <header className="top-bar">
         <div className="top-bar-logo">

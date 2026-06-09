@@ -61,33 +61,11 @@ export default function TradeBlotter({ holdings: propHoldings, livePositions }) 
   }, [weights, positions])
 
   const handleGenerate = async () => {
-    setGenerating(true)
-    try {
-      const r = await axios.post(`${API}/portfolio/execute_rebalance`, {
-        total_equity: AUM,
-        current_positions: positions,
-      })
-      setOrders(r.data.orders || [])
-    } catch {
-      setOrders(
-        deltaRows
-          .filter(r => r.deltaShares !== 0)
-          .map(r => ({
-            symbol: r.ticker,
-            side: r.deltaShares > 0 ? 'buy' : 'sell',
-            qty: Math.abs(r.deltaShares),
-            type: 'market',
-            time_in_force: 'day',
-          }))
-      )
-    }
-    setGenerating(false)
+    // Disabled logic
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(JSON.stringify(orders, null, 2))
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    // Disabled logic
   }
 
   if (loading) {
@@ -202,115 +180,7 @@ export default function TradeBlotter({ holdings: propHoldings, livePositions }) 
         </div>
       </div>
 
-      {/* ── Panel B: Paper Orders ─────────────────────────────────── */}
-      <div
-        style={{
-          flex: '1',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          borderBottom: '1px solid var(--border-2)',
-        }}
-      >
-        <div className="flex-shrink-0 px-4 py-2 border-b border-border-2 bg-surface-2 flex items-center justify-between">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-text-3">
-            PAPER ORDERS
-          </span>
-          {orders && (
-            <span className="font-mono text-[9px] text-green">
-              {orders.length} ORDERS GENERATED
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          {orders ? (
-            <table className="w-full table-fixed font-mono text-[11px] border-collapse">
-              <thead className="sticky top-0 z-10">
-                <tr>
-                  {['SYMBOL', 'ACTION', 'QTY', 'TYPE', 'TIF'].map(h => (
-                    <th
-                      key={h}
-                      className="px-3 py-2 text-left text-[9px] uppercase tracking-widest text-text-3 font-normal border-b border-border-2 bg-surface-2 whitespace-nowrap"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o, i) => {
-                  const isBuy = o.side?.toLowerCase() === 'buy'
-                  return (
-                    <tr
-                      key={i}
-                      className={`border-b border-border ${i % 2 === 0 ? 'bg-surface' : 'bg-surface-2'}`}
-                    >
-                      <td className="px-3 py-1.5 text-text-strong font-bold">{o.symbol}</td>
-                      <td className={`px-3 py-1.5 font-bold ${isBuy ? 'text-green' : 'text-red'}`}>
-                        {(o.side || '').toUpperCase()}
-                      </td>
-                      <td className="px-3 py-1.5 text-text-2">{Number(o.qty).toLocaleString()}</td>
-                      <td className="px-3 py-1.5 text-text-3 uppercase">{o.type || 'market'}</td>
-                      <td className="px-3 py-1.5 text-text-3 uppercase">{o.time_in_force || 'day'}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          ) : (
-            <div className="flex items-center justify-center h-full font-mono text-[11px] text-text-3">
-              PENDING — click GENERATE PAPER ORDERS to compute
-            </div>
-          )}
-        </div>
-
-        {/* Orders footer */}
-        <div className="flex-shrink-0 border-t border-border-2 px-4 py-2 bg-surface-2 flex items-center justify-between">
-          <div className="font-mono text-[9px] text-text-3 flex gap-4">
-            <span>TOTAL: {orders ? orders.length : '—'} ORDERS</span>
-            {orders && (
-              <>
-                <span className="text-green">{buyCount} BUY</span>
-                <span className="text-red">{sellCount} SELL</span>
-              </>
-            )}
-            <span>EST. TURNOVER: ${estTurnover.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
-          </div>
-          <span className="font-mono text-[9px] text-text-3">
-            Alpaca API compliant (market / day). Integer shares only. Fractional shares floor()-rounded to prevent margin overdraft.
-          </span>
-        </div>
-      </div>
-
-      {/* ── Panel C: Action Buttons ───────────────────────────────── */}
-      <div className="flex-shrink-0 p-4 bg-surface flex items-center gap-3">
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          onMouseEnter={() => setBtnHovered(true)}
-          onMouseLeave={() => setBtnHovered(false)}
-          className="font-mono text-[11px] uppercase tracking-widest px-6 py-3 transition-colors disabled:opacity-50"
-          style={{
-            border: '2px solid var(--border-2)',
-            background: btnHovered ? 'var(--text-strong)' : 'transparent',
-            color: btnHovered ? 'var(--bg)' : 'var(--text-strong)',
-            cursor: generating ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {generating ? 'GENERATING...' : 'GENERATE PAPER ORDERS'}
-        </button>
-
-        {orders && (
-          <button
-            onClick={handleCopy}
-            className="font-mono text-[10px] uppercase tracking-widest px-4 py-3 border border-border-2 bg-transparent cursor-pointer hover:bg-surface-2 transition-colors"
-            style={{ color: copied ? 'var(--green)' : 'var(--text-3)' }}
-          >
-            {copied ? '✓ COPIED' : 'COPY JSON TO CLIPBOARD'}
-          </button>
-        )}
-      </div>
+      {/* ── Panel C: Action Buttons (Removed) ─────────────────────── */}
     </div>
   )
 }
